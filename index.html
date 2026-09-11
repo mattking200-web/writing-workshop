@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Writing Workshop ✏️</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+:root{--mint:#4ade80;--mint-dark:#16a34a;--sky:#38bdf8;--sky-dark:#0284c7;--coral:#fb7185;--coral-dark:#e11d48;--yellow:#fbbf24;--purple:#a78bfa;--bg:#f0fdf4;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);background-image:radial-gradient(circle at 15% 15%,#dcfce7 0%,transparent 45%),radial-gradient(circle at 85% 85%,#ffe4e6 0%,transparent 45%);min-height:100vh;color:var(--text);padding:16px;}
+h1,h2,h3{font-family:'Fredoka One',cursive;letter-spacing:.02em;}
+.container{max-width:720px;margin:0 auto;}
+.header{background:#fff;border-radius:24px;padding:18px 22px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.06);border:2px solid #dcfce7;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.header-left h1{font-size:1.6rem;color:var(--coral-dark);}
+.breadcrumb{font-size:.72rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.streak-box{text-align:right;}
+.streak-lbl{font-size:.58rem;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:.12em;}
+.streak-val{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--mint-dark);line-height:1.1;}
+.streak-dots{display:flex;gap:3px;justify-content:flex-end;margin-top:5px;}
+.s-dot{width:14px;height:5px;border-radius:99px;background:#e2e8f0;}
+.s-dot.on{background:var(--mint-dark);}.s-dot.off{background:var(--coral);}
+.teacher-toggle{display:flex;align-items:center;gap:6px;background:#f1f5f9;padding:7px 12px;border-radius:99px;font-size:.72rem;font-weight:800;color:#475569;cursor:pointer;user-select:none;border:2px solid transparent;transition:all .2s;}
+.teacher-toggle.active{background:#ede9fe;color:#7c3aed;border-color:#c4b5fd;}
+.teacher-toggle .dot{width:8px;height:8px;border-radius:50%;background:#94a3b8;}
+.teacher-toggle.active .dot{background:#7c3aed;}
+.back-btn{background:#f1f5f9;border:none;border-radius:99px;padding:7px 14px;font-family:'Fredoka One',cursive;font-size:.85rem;cursor:pointer;color:#475569;}
+.back-btn:hover{background:#e2e8f0;}
+.card{background:#fff;border-radius:24px;padding:22px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.05);border:2px solid #f1f5f9;}
+.card h2{font-size:1.15rem;margin-bottom:16px;color:var(--text);}
+.grid{display:flex;flex-direction:column;gap:10px;}
+.pick-card{background:linear-gradient(135deg,#f0fdf4,#fff1f2);border:2px solid #dcfce7;border-radius:16px;padding:16px 18px;cursor:pointer;transition:all .2s;text-align:left;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:14px;}
+.pick-card:hover{border-color:var(--coral);transform:translateY(-2px);box-shadow:0 4px 14px rgba(251,113,133,.2);}
+.pick-card.locked{opacity:.55;cursor:not-allowed;}
+.pick-card.locked:hover{transform:none;box-shadow:none;border-color:#dcfce7;}
+.pick-icon{font-size:1.8rem;}
+.pick-card .title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--sky-dark);margin-bottom:3px;}
+.pick-card .sub{font-size:.8rem;color:var(--muted);font-weight:700;}
+.level-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.lvl-btn{padding:12px 18px;border:2px solid var(--border);border-radius:12px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;background:#fff;color:var(--text);transition:all .15s;min-width:56px;position:relative;}
+.lvl-btn:hover:not(:disabled){border-color:var(--coral);background:#fff1f2;transform:translateY(-1px);}
+.lvl-btn.active{background:var(--coral-dark);border-color:var(--coral-dark);color:#fff;}
+.lvl-btn:disabled{opacity:.4;cursor:not-allowed;}
+.lvl-btn .reps-tag{position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);font-family:'Nunito',sans-serif;font-size:.55rem;font-weight:900;background:#fef9c3;color:#92400e;border-radius:99px;padding:1px 6px;white-space:nowrap;}
+.btn{padding:11px 20px;border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:.98rem;cursor:pointer;transition:transform .15s,opacity .2s;letter-spacing:.04em;}
+.btn:hover:not(:disabled){transform:translateY(-2px);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;}
+.btn-green{background:linear-gradient(135deg,#4ade80,#22c55e);color:#fff;}
+.btn-sky{background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#fff;}
+.btn-coral{background:linear-gradient(135deg,#fb7185,#f43f5e);color:#fff;}
+.btn-purple{background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;}
+.btn-ghost{background:#f1f5f9;color:#475569;}
+.btn-lg{padding:16px 26px;font-size:1.2rem;width:100%;border-radius:16px;}
+.write-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:wrap;}
+.write-top .pills{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.pill{padding:4px 12px;border-radius:99px;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;}
+.pill-coral{background:#ffe4e6;color:var(--coral-dark);}
+.pill-sky{background:#dbeafe;color:#1d4ed8;}
+.pill-purple{background:#ede9fe;color:#6d28d9;}
+.rep-dots{display:flex;gap:4px;align-items:center;margin-bottom:14px;}
+.rep-dot{width:22px;height:8px;border-radius:99px;background:#e2e8f0;}
+.rep-dot.done{background:var(--mint-dark);}
+.rep-dot.current{background:var(--coral);}
+.prompt-box{background:linear-gradient(135deg,#fff1f2,#eff6ff);border-radius:18px;padding:20px 20px;border:3px solid #ffe4e6;margin-bottom:16px;}
+.prompt-title{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--coral-dark);margin-bottom:6px;}
+.prompt-text{font-size:1.25rem;line-height:1.6;font-weight:700;color:var(--text);}
+.exemplar-box{margin-top:10px;padding:10px 14px;background:#ede9fe;border:2px solid #c4b5fd;border-radius:12px;font-size:.85rem;color:#5b21b6;font-weight:700;white-space:pre-line;}
+.exemplar-lbl{font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#7c3aed;margin-bottom:3px;}
+.starter-box{background:#eff6ff;border:2px solid #bfdbfe;border-radius:12px;padding:12px 15px;margin-bottom:12px;font-weight:800;color:#1e40af;font-size:1.05rem;}
+.starter-lbl{font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#60a5fa;margin-bottom:4px;}
+.rehearsal-box{background:linear-gradient(135deg,#fef9c3,#fef3c7);border:3px solid var(--yellow);border-radius:16px;padding:16px 18px;margin-bottom:16px;text-align:center;}
+.rehearsal-box.done{background:#f0fdf4;border-color:var(--mint);padding:10px 18px;}
+.rehearsal-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#92400e;margin-bottom:6px;}
+.rehearsal-box.done .rehearsal-title{color:var(--mint-dark);font-size:.95rem;}
+.rehearsal-sub{font-size:.85rem;font-weight:700;color:#92400e;margin-bottom:12px;}
+.rehearsal-btns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;}
+.scribe-row{margin-top:10px;font-size:.78rem;color:#92400e;}
+.scribe-row label{display:inline-flex;align-items:center;gap:6px;font-weight:700;cursor:pointer;}
+textarea:disabled{background:#f1f5f9;color:#94a3b8;cursor:not-allowed;}
+.btn-coral:disabled{background:#f1f5f9;color:#94a3b8;}
+.wordbank{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;}
+.wb-chip{background:#fef9c3;border:2px solid #fde68a;color:#92400e;padding:6px 13px;border-radius:99px;font-weight:800;font-size:.88rem;}
+.checklist-side{background:#f8fafc;border:2px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px;}
+.checklist-side-title{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+.checklist-side ul{list-style:none;}
+.checklist-side li{font-size:.88rem;font-weight:700;color:var(--text);padding:4px 0;display:flex;align-items:center;gap:8px;}
+.checklist-side li:before{content:"☐";color:#94a3b8;font-size:1.05rem;}
+textarea{width:100%;min-height:140px;padding:16px;border:3px solid var(--border);border-radius:16px;font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:700;color:var(--text);resize:vertical;line-height:1.6;}
+textarea:focus{outline:none;border-color:var(--coral);}
+.word-count{text-align:right;font-size:.75rem;font-weight:800;color:var(--muted);margin:6px 0 16px;}
+.results-card{border-radius:24px;padding:22px;margin-bottom:14px;box-shadow:0 6px 24px rgba(0,0,0,.07);}
+.results-card.success{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:3px solid #86efac;}
+.results-card.fail{background:linear-gradient(135deg,#fff7ed,#ffedd5);border:3px solid #fdba74;}
+.score-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px;}
+.score-num{font-family:'Fredoka One',cursive;font-size:2.4rem;color:var(--text);line-height:1;}
+.score-lbl{font-size:.68rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.badge{padding:7px 17px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.88rem;}
+.badge.s{background:#22c55e;color:#fff;}.badge.f{background:#f97316;color:#fff;}
+.rep-progress-line{font-size:.78rem;font-weight:800;color:var(--muted);margin-bottom:16px;}
+.annotated-box{background:rgba(255,255,255,.7);border-radius:13px;padding:16px;margin-bottom:16px;font-size:1.15rem;line-height:1.8;font-weight:700;}
+.mk-ok{text-decoration:underline;text-decoration-color:#16a34a;text-decoration-thickness:3px;}
+.mk-bad{text-decoration:underline;text-decoration-color:#ef4444;text-decoration-thickness:3px;}
+.mk-trait{background:#fef08a;border-radius:3px;padding:0 2px;}
+.check-results{padding:14px 16px;background:rgba(255,255,255,.6);border-radius:13px;margin-bottom:16px;}
+.check-item{font-size:.92rem;font-weight:800;padding:5px 0;display:flex;align-items:center;gap:8px;}
+.check-item.pass{color:#16a34a;}
+.check-item.miss{color:#dc2626;}
+.tip-box{background:#fefce8;border-radius:13px;padding:13px 16px;border:2px solid #fde68a;margin-bottom:16px;font-size:.9rem;font-weight:700;color:#92400e;line-height:1.55;}
+.tip-box .tip-title{font-family:'Fredoka One',cursive;color:#d97706;margin-bottom:4px;font-size:.95rem;}
+.action-row{display:flex;gap:9px;flex-wrap:wrap;}
+.action-row .btn{flex:1;min-width:110px;}
+.quiz-wrap{background:#fff;border-radius:24px;padding:22px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.06);border:2px solid #e0e7ff;}
+.quiz-wrap h2{font-size:1.15rem;color:#4338ca;margin-bottom:4px;}
+.quiz-sub{font-size:.8rem;color:var(--muted);font-weight:700;margin-bottom:18px;}
+.quiz-q{margin-bottom:18px;}
+.quiz-q-text{font-weight:800;font-size:.95rem;color:var(--text);margin-bottom:9px;line-height:1.45;}
+.quiz-opts{display:flex;flex-direction:column;gap:7px;}
+.qopt{padding:11px 15px;border:2px solid var(--border);border-radius:12px;background:#fff;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;text-align:left;transition:all .15s;color:var(--text);}
+.qopt:hover:not(:disabled){border-color:#818cf8;background:#eef2ff;transform:translateX(3px);}
+.qopt.selected{border-color:#6366f1;background:#eef2ff;color:#4338ca;}
+.qopt.correct{border-color:#16a34a!important;background:#dcfce7!important;color:#15803d!important;}
+.qopt.wrong{border-color:#dc2626!important;background:#fee2e2!important;color:#b91c1c!important;}
+.qopt:disabled{cursor:not-allowed;transform:none!important;}
+.quiz-score{background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-radius:16px;padding:16px 20px;text-align:center;margin-top:12px;}
+.quiz-score-big{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#4338ca;}
+.quiz-score-msg{font-weight:800;font-size:.9rem;color:#6366f1;margin-top:4px;}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.slide-up{animation:slideUp .35s ease;}
+footer{text-align:center;padding:16px 0;font-size:.7rem;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:.15em;}
+@media(max-width:480px){.prompt-text{font-size:1.05rem;}.annotated-box{font-size:1rem;}}
+@media print{body{background:#fff;padding:0;}.header,.card,#quiz-area,.action-row,footer,.teacher-toggle,.back-btn{display:none!important;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <h1>Writing Workshop ✏️</h1>
+      <div class="breadcrumb" id="breadcrumb">Pick a grade to start</div>
+    </div>
+    <div class="header-right">
+      <div class="streak-box">
+        <div class="streak-lbl">Streak</div>
+        <div class="streak-val" id="streak-val">🔥 0</div>
+        <div class="streak-dots" id="streak-dots"></div>
+      </div>
+      <div class="teacher-toggle" id="teacher-toggle" onclick="toggleTeacher()">
+        <span class="dot"></span><span>Teacher Mode</span>
+      </div>
+    </div>
+  </div>
+  <div id="app"></div>
+  <div id="quiz-area"></div>
+  <footer>Writing Workshop · Ontario Grades 1–3</footer>
+</div>
+
+<script>
+// ── DATA ──
+const DATA = {
+  1:{ label:'Grade 1', sub:'Ages 6–7', units:{
+    'sentences-about-me':{
+      title:'Sentences About Me', sub:'Write sentences about your favorite things', icon:'✏️', available:true,
+      levels:[
+        { reps:2, scaffoldType:'wordbank-starter',
+          target:{minWords:4, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 words","Names one thing","Uses different words (not just repeating one)"],
+          hints:["What color is it?","Where do you see it?","What does it like to do?"],
+          prompts:[
+            { text:"Write one sentence about your favorite animal.", starter:"My favorite animal is ___.", wordBank:["dog","cat","lion","panda","horse","rabbit","elephant","turtle"], exemplar:"My favorite animal is a panda." },
+            { text:"Write one sentence about your favorite toy.", starter:"My favorite toy is ___.", wordBank:["blocks","doll","truck","ball","puzzle","robot","kite","yo-yo"], exemplar:"My favorite toy is my red truck." },
+            { text:"Write one sentence about your favorite color.", starter:"My favorite color is ___.", wordBank:["red","blue","green","purple","yellow","pink","orange","black"], exemplar:"My favorite color is blue." }
+          ] },
+        { reps:2, scaffoldType:'starter',
+          target:{minWords:6, minSentences:1, traitWords:["because","since","that's why","that is why"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Gives a reason (a word like \"because\", or extra detail explaining why)","Uses different words (not just repeating one)"],
+          hints:["What does it taste like?","How does it make you feel?","When do you like it best?"],
+          prompts:[
+            { text:"Write one sentence about your favorite food, and tell why you like it.", starter:"My favorite food is ___ because ___.", exemplar:"My favorite food is pizza because it is cheesy and warm." },
+            { text:"Write one sentence about your favorite season, and tell why.", starter:"My favorite season is ___ because ___.", exemplar:"My favorite season is summer because I get to swim." },
+            { text:"Write one sentence about your favorite thing to do at school, and tell why.", starter:"My favorite thing to do at school is ___ because ___.", exemplar:"My favorite thing to do at school is art because I like to paint." }
+          ] },
+        { reps:3, scaffoldType:'starter',
+          target:{minWords:8, minSentences:2, traitWords:["because","since","that's why","that is why"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Gives a reason (a word like \"because\", or extra detail explaining why)","Uses different words (not just repeating one)"],
+          hints:["Who do you do it with?","How does it make you feel?","Where do you do it?"],
+          prompts:[
+            { text:"Write two sentences about something you like to do. Tell what it is and why it is fun.", starter:"I like to ___. It is fun because ___.", exemplar:"I like to ride my bike. It is fun because I go fast." },
+            { text:"Write two sentences about a game you like to play. Tell what it is and why it is fun.", starter:"I like to play ___. It is fun because ___.", exemplar:"I like to play tag. It is fun because I run fast." },
+            { text:"Write two sentences about a place you like to go. Tell where it is and why you like it.", starter:"I like to go to ___. It is fun because ___.", exemplar:"I like to go to the park. It is fun because I can swing." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:12, minSentences:3, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 3 sentences","Stays on topic (about you)","Uses different words (not just repeating one)"],
+          hints:["What do you like about it?","When did you find out you were good at it?","Who knows this about you?"],
+          prompts:[
+            { text:"Write three sentences about yourself: your name, something you like, and something you are good at.", exemplar:"My name is Sam. I like drawing dinosaurs. I am good at soccer." },
+            { text:"Write three sentences: your name, your favorite season, and something you are good at.", exemplar:"My name is Mia. My favorite season is winter. I am good at building snowmen." },
+            { text:"Write three sentences: your name, a place you like to go, and something you like to do there.", exemplar:"My name is Alex. I like to go to the library. I like to read comic books there." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:2, traitWords:["big","small","soft","fuzzy","furry","shiny","colorful","fast","slow","loud","quiet","yummy","sweet","fluffy","tall","short","bright","cold","warm","round"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Uses a describing word (big, soft, yummy...) or extra detail","Uses different words (not just repeating one)"],
+          hints:["What does it look like?","What does it feel like?","What sound does it make?"],
+          prompts:[
+            { text:"Write two or three sentences describing your favorite animal. What does it look like? What does it do?", exemplar:"My favorite animal is a panda. It is big and fuzzy. It likes to eat bamboo." },
+            { text:"Write two or three sentences describing your favorite food. What does it look like or taste like?", exemplar:"My favorite food is pizza. It is round and cheesy. It tastes so yummy." },
+            { text:"Write two or three sentences describing your favorite toy. What does it look like?", exemplar:"My favorite toy is my teddy bear. It is soft and brown. It has a red bow." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:16, minSentences:4, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 sentences","Stays on topic (tells about one event)","Uses different words (not just repeating one)"],
+          hints:["Where were you?","Who was with you?","How did it end?"],
+          prompts:[
+            { text:"Write four sentences about a fun day you had. What did you do? How did you feel?", exemplar:"Last weekend I went to the zoo. I saw a big lion. I also saw monkeys playing. It was a great day." },
+            { text:"Write four sentences about a trip or outing you went on.", exemplar:"I went to my cousin's house. We played games together. We ate ice cream after lunch. I had so much fun." },
+            { text:"Write four sentences about a time you helped someone.", exemplar:"I helped my mom clean the kitchen. I washed the dishes. She thanked me for helping. I felt proud." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:16, minSentences:4, traitWords:["first","next","then","after that","finally"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 sentences","Uses a linking word (First, Next, Then, Finally...)","Uses different words (not just repeating one)"],
+          hints:["What do you do right when you wake up?","What comes after that?","What do you do last?"],
+          prompts:[
+            { text:"Write about your morning routine. Use words like First, Next, and Then.", exemplar:"First, I wake up and brush my teeth. Next, I get dressed. Then I eat breakfast. Finally, I go to school." },
+            { text:"Write about how you get ready for bed. Use words like First, Next, and Then.", exemplar:"First, I put on my pajamas. Next, I brush my teeth. Then I read a book. Finally, I go to sleep." },
+            { text:"Write about how you play your favorite game, step by step.", exemplar:"First, I get the ball. Next, I find a friend to play with. Then we take turns. Finally, we count who won." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:20, minSentences:4, traitWords:["first","next","also","finally","in conclusion"], extraWordsBonus:6},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 sentences","Uses a linking word (First, Next, Also...) or adds extra detail","Uses different words (not just repeating one)"],
+          hints:["What does it look like outside?","What do you do with your family or friends?","How does it feel — hot, cold, exciting?"],
+          prompts:[
+            { text:"Write a paragraph about your favorite season. Include a topic sentence, two detail sentences, and a closing sentence.", exemplar:"My favorite season is summer. First, the weather is warm and sunny. Also, I get to go swimming with my friends. Summer is the best season of the year." },
+            { text:"Write a paragraph about your favorite place. Include a topic sentence, two detail sentences, and a closing sentence.", exemplar:"My favorite place is the park. First, there is a big slide I love. Also, I can play with my friends there. The park always makes me happy." },
+            { text:"Write a paragraph about your favorite hobby. Include a topic sentence, two detail sentences, and a closing sentence.", exemplar:"My favorite hobby is drawing. First, I like to draw animals. Also, I like using bright colors. Drawing always makes me feel calm and happy." }
+          ] }
+      ] },
+    'labels-lists':{ title:'Labels & Lists', sub:'Label pictures and write organized lists', icon:'🏷️', available:true,
+      levels:[
+        { reps:2, scaffoldType:'emoji-wordbank', mode:'label',
+          target:{minWords:1, maxWords:2},
+          checklist:["Writes a word (not empty)","Uses 1–2 words (a label, not a full sentence)"],
+          hints:["Can you think of another word for it?","What is another way to say it?"],
+          prompts:[
+            { emoji:"🐶", text:"Look at the picture. Write one word to label it.", wordBank:["dog","puppy","pet","animal"], exemplar:"dog" },
+            { emoji:"🍎", text:"Look at the picture. Write one word to label it.", wordBank:["apple","fruit","red","snack"], exemplar:"apple" },
+            { emoji:"🚗", text:"Look at the picture. Write one word to label it.", wordBank:["car","vehicle","wheels","drive"], exemplar:"car" }
+          ] },
+        { reps:2, scaffoldType:'emoji-wordbank', mode:'label',
+          target:{minWords:2, maxWords:4, traitWords:["big","small","soft","fuzzy","furry","shiny","colorful","fast","slow","loud","quiet","yummy","sweet","fluffy","tall","short","bright","cold","warm","round","red","blue","green","yellow","brown","black","white","pink"]},
+          checklist:["Writes a word (not empty)","Writes 2–4 words","Uses a describing word (color, size, shape...)"],
+          hints:["What color is it?","What size is it?","What shape is it?"],
+          prompts:[
+            { emoji:"🐶", text:"Write a label with 2–4 words that describes the picture (not just one word!).", wordBank:["big","brown","dog","fluffy"], exemplar:"big brown dog" },
+            { emoji:"🍕", text:"Write a label with 2–4 words that describes the picture.", wordBank:["round","cheesy","pizza","warm"], exemplar:"warm cheesy pizza" },
+            { emoji:"🌸", text:"Write a label with 2–4 words that describes the picture.", wordBank:["small","pink","flower","pretty"], exemplar:"small pink flower" }
+          ] },
+        { reps:3, scaffoldType:'list', mode:'list',
+          target:{minItems:3, itemMaxWords:4},
+          checklist:["Has at least 3 items","Each item is a short word or phrase (not a long sentence)","Uses different words (not just repeating one)"],
+          hints:["What else would you bring?","Can you think of one more?","What else belongs on this list?"],
+          prompts:[
+            { text:"Write a list of 3 things you would pack for a trip to the beach. Write one item on each line.", exemplar:"sunscreen\nbeach towel\nswimsuit" },
+            { text:"Write a list of 3 things you would need to build a snowman. Write one item on each line.", exemplar:"snow\ncarrot nose\nscarf" },
+            { text:"Write a list of 3 things you would bring on a picnic. Write one item on each line.", exemplar:"sandwiches\nblanket\njuice box" }
+          ] },
+        { reps:3, scaffoldType:'list', mode:'list',
+          target:{minItems:4, itemMaxWords:4},
+          checklist:["Has at least 4 items","Each item is a short word or phrase","Uses different words (not just repeating one)"],
+          hints:["What else belongs on the list?","Can you think of one more?","What other one fits?"],
+          prompts:[
+            { text:"Write a list of 4 animals you might see at the zoo. Write one item on each line.", exemplar:"lion\nelephant\nmonkey\ngiraffe" },
+            { text:"Write a list of 4 foods you like to eat for breakfast. Write one item on each line.", exemplar:"toast\neggs\ncereal\norange juice" },
+            { text:"Write a list of 4 toys you like to play with. Write one item on each line.", exemplar:"blocks\nrobot\nball\npuzzle" }
+          ] },
+        { reps:3, scaffoldType:'list', mode:'list',
+          target:{minItems:4, itemMaxWords:4},
+          checklist:["Has at least 4 items","Each item is a short word or phrase","Uses different words (not just repeating one)"],
+          hints:["What's another one from the first group?","What's another one from the second group?","Did you get 2 of each?"],
+          prompts:[
+            { text:"Write a list of 4 animals: 2 that live on land and 2 that live in water. Write one item on each line.", exemplar:"dog\nhorse\nfish\nwhale" },
+            { text:"Write a list of 4 foods: 2 that are fruits and 2 that are vegetables. Write one item on each line.", exemplar:"apple\nbanana\ncarrot\nbroccoli" },
+            { text:"Write a list of 4 things: 2 that are hot and 2 that are cold. Write one item on each line.", exemplar:"soup\nfire\nice cream\nsnow" }
+          ] },
+        { reps:3, scaffoldType:'list', mode:'list',
+          target:{minItems:3, itemMaxWords:2},
+          checklist:["Has at least 3 items","Each item is 1–2 words (like a label, not a sentence)","Uses different words (not just repeating one)"],
+          hints:["What's another part?","Look closely — what else can you see?","What's one more part?"],
+          prompts:[
+            { text:"Label 3 parts of a plant. Write one part on each line (for example: root).", exemplar:"root\nstem\nleaf" },
+            { text:"Label 3 parts of a house. Write one part on each line (for example: roof).", exemplar:"roof\ndoor\nwindow" },
+            { text:"Label 3 parts of your body. Write one part on each line (for example: head).", exemplar:"head\narms\nlegs" }
+          ] },
+        { reps:3, scaffoldType:'list', mode:'list',
+          target:{minItems:5, itemMaxWords:4},
+          checklist:["Has at least 5 items","Each item is a short word or phrase","Uses different words (not just repeating one)"],
+          hints:["What else would you need?","Can you think of one more?","What did you forget?"],
+          prompts:[
+            { text:"Write a grocery list of 5 things you would need to make a pizza. Write one item on each line.", exemplar:"dough\ntomato sauce\ncheese\npepperoni\noregano" },
+            { text:"Write a list of 5 school supplies you need for class. Write one item on each line.", exemplar:"pencil\nnotebook\neraser\nruler\ncrayons" },
+            { text:"Write a list of 5 things you would pack in a backpack for a hike. Write one item on each line.", exemplar:"water bottle\nsnacks\nmap\nflashlight\nfirst aid kit" }
+          ] },
+        { reps:3, scaffoldType:'list', mode:'list',
+          target:{minItems:4, itemMaxWords:6, traitWords:["first","next","then","after","finally"]},
+          checklist:["Has at least 4 steps","Each step is a short phrase (not a long sentence)","Uses an order word (First, Next, Then, Finally) in at least one step","Uses different words (not just repeating one)"],
+          hints:["What do you do right after that?","What comes next?","What's the very last step?"],
+          prompts:[
+            { text:"Write the steps to make a peanut butter sandwich. Use words like First, Next, and Finally. Write one step on each line.", exemplar:"First, get two slices of bread\nNext, spread peanut butter\nThen, put the slices together\nFinally, eat your sandwich" },
+            { text:"Write the steps to brush your teeth. Use words like First, Next, and Finally.", exemplar:"First, wet your toothbrush\nNext, add toothpaste\nThen, brush for two minutes\nFinally, rinse your mouth" },
+            { text:"Write the steps to get ready for school in the morning. Use words like First, Next, and Finally.", exemplar:"First, wake up and get dressed\nNext, eat breakfast\nThen, brush your teeth\nFinally, grab your backpack" }
+          ] }
+      ] },
+    'simple-stories':{ title:'Simple Stories', sub:'Write short stories with characters and a beginning, middle, and end', icon:'📖', available:true, storyMode:true,
+      levels:[
+        { reps:2, scaffoldType:'wordbank-starter',
+          target:{minWords:4, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 words","Introduces a character","Uses different words (not just repeating one)"],
+          hints:["What does the character look like?","Is the character a person or an animal?","What is the character's name?"],
+          storyInstruction:"Now start YOUR OWN story! Introduce your character.",
+          storyStarters:["a brave animal going on an adventure","a kid who finds something magical","a robot who wants a friend","Write my own idea instead"],
+          storyTarget:{minWords:4, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 words","Introduces a character","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write one sentence to introduce a character for your story.", starter:"Once there was a ___.", wordBank:["dog","cat","robot","dragon","knight","fairy"], exemplar:"Once there was a brave little dog." },
+            { text:"Write one sentence to introduce a character for your story.", starter:"Once there was a ___.", wordBank:["princess","pirate","wizard","mouse","bear","astronaut"], exemplar:"Once there was a clever young mouse." },
+            { text:"Write one sentence to introduce a character for your story.", starter:"Once there was a ___.", wordBank:["turtle","superhero","alien","farmer","monster","fox"], exemplar:"Once there was a funny green alien." }
+          ] },
+        { reps:2, scaffoldType:'starter',
+          target:{minWords:6, minSentences:1, traitWords:["big","small","soft","fuzzy","furry","shiny","colorful","fast","slow","loud","quiet","yummy","sweet","fluffy","tall","short","bright","cold","warm","round","dark","spooky","sunny","sandy","sparkly","tiny","rocky"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Uses a describing word (color, size, feeling of a place...)","Uses different words (not just repeating one)"],
+          hints:["What does the place look like?","Is it day or night?","What can you hear or smell there?"],
+          storyInstruction:"Add a sentence describing WHERE your story happens.",
+          storyTarget:{minWords:6, minSentences:1, traitWords:["big","small","soft","fuzzy","furry","shiny","colorful","fast","slow","loud","quiet","yummy","sweet","fluffy","tall","short","bright","cold","warm","round","dark","spooky","sunny","sandy","sparkly","tiny","rocky"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Uses a describing word (color, size, feeling of a place...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write one sentence describing the setting (where your story happens).", starter:"One day, in a ___, something amazing happened.", exemplar:"One day, in a dark spooky forest, something amazing happened." },
+            { text:"Write one sentence describing the setting (where your story happens).", starter:"One day, in a ___, something amazing happened.", exemplar:"One day, in a tall sparkly castle, something amazing happened." },
+            { text:"Write one sentence describing the setting (where your story happens).", starter:"One day, in a ___, something amazing happened.", exemplar:"One day, on a sunny sandy beach, something amazing happened." }
+          ] },
+        { reps:3, scaffoldType:'starter',
+          target:{minWords:8, minSentences:2, traitWords:["but","suddenly","then"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Introduces a problem (uses a word like \"but\" or \"suddenly\")","Uses different words (not just repeating one)"],
+          hints:["What does your character want?","What goes wrong?","How do they feel about it?"],
+          storyInstruction:"Add a sentence or two: what does your character want, and what problem gets in the way?",
+          storyTarget:{minWords:8, minSentences:2, traitWords:["but","suddenly","then"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Introduces a problem (uses a word like \"but\" or \"suddenly\")","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write two sentences: introduce your character's wish, and tell what problem gets in the way.", starter:"___ wanted to ___. But then, ___!", exemplar:"The dog wanted to find a bone. But then, it started to rain!" },
+            { text:"Write two sentences: introduce your character's wish, and tell what problem gets in the way.", starter:"___ wanted to ___. But then, ___!", exemplar:"The princess wanted to go to the ball. But then, she lost her shoe!" },
+            { text:"Write two sentences: introduce your character's wish, and tell what problem gets in the way.", starter:"___ wanted to ___. But then, ___!", exemplar:"The astronaut wanted to land on the moon. But then, the rocket ran out of fuel!" }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:12, minSentences:3, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 3 sentences","Has a beginning, middle, and end","Uses different words (not just repeating one)"],
+          hints:["What happens first?","What happens next?","How does it end?"],
+          storyInstruction:"Add a sentence: what does your character TRY to do about the problem?",
+          storyTarget:{minWords:8, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Continues your story (what your character tries)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write three sentences that tell a mini story: a beginning, a middle, and an end.", exemplar:"A little fox found a shiny key. He used it to open a hidden door. Inside, he found a room full of treasure." },
+            { text:"Write three sentences that tell a mini story about a character who gets lost and finds their way home.", exemplar:"A puppy wandered away from home. It looked everywhere for a familiar path. Finally, it followed its nose back to its family." },
+            { text:"Write three sentences that tell a mini story about a character who makes a new friend.", exemplar:"A shy robot lived all alone. One day, a kind girl said hello. They became best friends forever." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:2, traitWords:["big","small","soft","fuzzy","furry","shiny","colorful","fast","slow","loud","quiet","tall","short","bright","cold","warm","round","dark","tiny","rocky","silver","gray"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Uses a describing word (color, size, feeling...)","Uses different words (not just repeating one)"],
+          hints:["What does your character look like?","What are they wearing?","What does the place around them look like?"],
+          storyInstruction:"Add one more describing detail somewhere in your story.",
+          storyTarget:{minWords:6, minSentences:1, traitWords:["big","small","soft","fuzzy","furry","shiny","colorful","fast","slow","loud","quiet","tall","short","bright","cold","warm","round","dark","tiny","rocky","silver","gray"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Uses a describing word (color, size, feeling...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write two or three sentences describing your character and where they are. What do they look like? Where are they?", exemplar:"The knight wore shiny silver armor. He stood in front of a tall, dark castle." },
+            { text:"Write two or three sentences describing your character and where they are.", exemplar:"The tiny mouse had soft gray fur. She lived inside a cozy little hole in the wall." },
+            { text:"Write two or three sentences describing your character and where they are.", exemplar:"The dragon had bright red scales. It rested on top of a rocky mountain." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:16, minSentences:4, traitWords:["finally","so","then"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 sentences","Uses a word that shows the problem is solved (so, finally, then...)","Uses different words (not just repeating one)"],
+          hints:["Who helps solve the problem?","How does the character feel at the end?","What happens right after the problem?"],
+          storyInstruction:"Add a sentence showing how the problem gets SOLVED.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["finally","so","then"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a word that shows the problem is solved (so, finally, then...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write four sentences about a character who has a problem and solves it.", exemplar:"The cat was stuck in a tall tree. She was scared and meowed loudly. A firefighter climbed up and helped her down. Finally, the cat was safe on the ground." },
+            { text:"Write four sentences about a character who has a problem and solves it.", exemplar:"The boy lost his favorite toy. He looked all around his room. He checked under his bed and found it there. Finally, he was happy again." },
+            { text:"Write four sentences about a character who has a problem and solves it.", exemplar:"The bird's nest fell out of the tree. The mother bird did not know what to do. A kind girl helped build a new nest. Finally, the baby birds were safe and warm." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:16, minSentences:4, traitWords:["first","next","then","after that","finally"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 sentences","Uses a linking word (First, Next, Then, Finally...)","Uses different words (not just repeating one)"],
+          hints:["What does your character do right at the start?","What happens after that?","How does the day end?"],
+          storyInstruction:"Add a sentence using a linking word (First, Next, Then, Finally) to show the order of events.",
+          storyTarget:{minWords:6, minSentences:1, traitWords:["first","next","then","after that","finally"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Uses a linking word (First, Next, Then, Finally...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a short story about a character's day at school. Use words like First, Next, Then, and Finally.", exemplar:"First, the girl walked into her classroom. Next, she read a new book. Then, she played outside at recess. Finally, she went home happy." },
+            { text:"Write a short story about a character's adventure in the woods. Use words like First, Next, Then, and Finally.", exemplar:"First, the boy walked into the woods. Next, he saw a rabbit hop by. Then, he found a small stream. Finally, he walked back home." },
+            { text:"Write a short story about a character baking a cake. Use words like First, Next, Then, and Finally.", exemplar:"First, the baker mixed the flour and sugar. Next, she added the eggs. Then, she put the cake in the oven. Finally, she ate a delicious slice." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:24, minSentences:5, traitWords:["first","next","then","finally","suddenly","in the end"], extraWordsBonus:6},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 5 sentences","Uses a linking word (First, Next, Suddenly...) or adds extra detail","Uses different words (not just repeating one)"],
+          hints:["Who is your character and what do they want?","What problem do they run into?","How does the story end?"],
+          storyInstruction:"Write the CLOSING sentence for your story. How does it end?",
+          storyTarget:{minWords:6, minSentences:1, traitWords:["finally","in the end","so"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Wraps up the story (an ending word like Finally or In the end)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a paragraph story with a character, a problem, and how it gets solved. Include a beginning, middle, and end.", exemplar:"Once there was a small turtle named Sam. He wanted to race the other animals, but he was very slow. Suddenly, the other animals got tired and stopped to rest. Sam kept walking slowly and steadily. In the end, Sam won the race because he never gave up." },
+            { text:"Write a paragraph story with a character, a problem, and how it gets solved.", exemplar:"Once there was a little girl named Mia who loved to paint. One day, she lost her favorite paintbrush before the art show. First, she looked all over her house. Next, she found it hiding under her bed. In the end, Mia painted the best picture in the whole show." },
+            { text:"Write a paragraph story with a character, a problem, and how it gets solved.", exemplar:"Once there was a puppy named Rex who was afraid of thunder. One stormy night, Rex hid under the bed shaking with fear. His owner came in and held him close. Slowly, Rex began to feel brave and calm. In the end, Rex learned that storms were not so scary after all." }
+          ] }
+      ] }
+  }},
+  2:{ label:'Grade 2', sub:'Ages 7–8', units:{
+    'personal-narratives':{
+      title:'Personal Narratives', sub:'Write true stories about your own real memories', icon:'📔', available:true, storyMode:true,
+      levels:[
+        { reps:2, scaffoldType:'wordbank-starter',
+          target:{minWords:6, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Tells about something that REALLY happened to you","Uses different words (not just repeating one)"],
+          hints:["What happened right before?","Who was there with you?","How old were you?"],
+          storyInstruction:"Now write about YOUR OWN real memory to start your story.",
+          storyStarters:["a time I learned something new","a time I felt proud of myself","a special day with my family","Write my own idea instead"],
+          storyTarget:{minWords:6, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Tells about something that REALLY happened to you","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write one sentence about a real memory you have. What happened?", starter:"I will never forget the time I ___.", wordBank:["went to the zoo","lost my tooth","rode a bike","learned to swim"], exemplar:"I will never forget the time I rode a bike for the first time." },
+            { text:"Write one sentence about a real memory you have. What happened?", starter:"I will never forget the time I ___.", wordBank:["went to the beach","got a new pet","visited my grandma","won a race"], exemplar:"I will never forget the time I got a new pet." },
+            { text:"Write one sentence about a real memory you have. What happened?", starter:"I will never forget the time I ___.", wordBank:["started school","went camping","baked cookies","flew on a plane"], exemplar:"I will never forget the time I flew on a plane." }
+          ] },
+        { reps:2, scaffoldType:'starter',
+          target:{minWords:8, minSentences:1, traitWords:["last week","last summer","last year","one day","when i was","at school","at home","at the park","during"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Tells WHEN or WHERE it happened, or adds extra detail","Uses different words (not just repeating one)"],
+          hints:["Was it a special day?","Whose house were you at?","What season was it?"],
+          storyInstruction:"Add a sentence that tells WHEN and WHERE your memory took place.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["last week","last summer","last year","one day","when i was","at school","at home","at the park","during"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Tells WHEN or WHERE it happened, or adds extra detail","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write one sentence that tells WHEN and WHERE your memory took place.", starter:"It happened ___, ___.", exemplar:"It happened last summer, at my grandma's house." },
+            { text:"Write one sentence that tells WHEN and WHERE your memory took place.", starter:"It happened ___, ___.", exemplar:"It happened when I was in Grade 1, at my old school." },
+            { text:"Write one sentence that tells WHEN and WHERE your memory took place.", starter:"It happened ___, ___.", exemplar:"It happened one day last winter, at the skating rink." }
+          ] },
+        { reps:3, scaffoldType:'starter',
+          target:{minWords:10, minSentences:2, traitWords:["happy","scared","excited","nervous","proud","embarrassed","surprised","worried","sad","brave"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Names a feeling (happy, scared, excited...) or adds extra detail","Uses different words (not just repeating one)"],
+          hints:["What made you feel that way?","Did your feelings change?","How did your body feel (shaky, warm, tired)?"],
+          storyInstruction:"Add a sentence or two: how did you feel, and why?",
+          storyTarget:{minWords:10, minSentences:2, traitWords:["happy","scared","excited","nervous","proud","embarrassed","surprised","worried","sad","brave"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Names a feeling (happy, scared, excited...) or adds extra detail","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write two sentences: tell how you felt, and why you felt that way.", starter:"I felt ___ because ___.", exemplar:"I felt so nervous before my first swimming lesson. I was scared I would sink under the water." },
+            { text:"Write two sentences: tell how you felt, and why you felt that way.", starter:"I felt ___ because ___.", exemplar:"I felt really excited on my first day of school. I could not wait to meet my new teacher." },
+            { text:"Write two sentences: tell how you felt, and why you felt that way.", starter:"I felt ___ because ___.", exemplar:"I felt very proud when I finally rode my bike without training wheels. My dad cheered so loudly for me." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:14, minSentences:3, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 3 sentences","Tells a REAL memory with a beginning, middle, and end","Uses different words (not just repeating one)"],
+          hints:["What happened first?","What happened in the middle?","How did it end?"],
+          storyInstruction:"Add a sentence: what happened in the MIDDLE of your memory?",
+          storyTarget:{minWords:8, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Continues your real memory","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write three sentences that tell a real memory: a beginning, a middle, and an end.", exemplar:"Last summer, my family went camping by a lake. We roasted marshmallows over the campfire at night. In the morning, we went fishing and I caught my very first fish." },
+            { text:"Write three sentences that tell a real memory: a beginning, a middle, and an end.", exemplar:"On my birthday last year, my friends came over for a party. We played games and ate a big chocolate cake. At the end of the day, I opened all my presents." },
+            { text:"Write three sentences that tell a real memory: a beginning, a middle, and an end.", exemplar:"When I was six, I lost my two front teeth. My mom put them under my pillow that night. In the morning, I found a shiny coin from the tooth fairy." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:12, minSentences:2, traitWords:["big","small","soft","fuzzy","loud","quiet","warm","cold","bright","shaky","gooey","crackled","wobbly","cool","shiny","colorful","tiny","huge"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Uses a describing word (how it looked, sounded, or felt)","Uses different words (not just repeating one)"],
+          hints:["What did you see?","What did you hear?","How did it feel on your skin?"],
+          storyInstruction:"Add one more sensory detail somewhere in your memory.",
+          storyTarget:{minWords:6, minSentences:1, traitWords:["big","small","soft","fuzzy","loud","quiet","warm","cold","bright","shaky","gooey","crackled","wobbly","cool","shiny","colorful","tiny","huge"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Uses a describing word (how it looked, sounded, or felt)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write two or three sentences describing what you saw, heard, or felt during your memory.", exemplar:"The campfire crackled loudly in the dark night. The marshmallows were warm and gooey in my mouth." },
+            { text:"Write two or three sentences describing what you saw, heard, or felt during your memory.", exemplar:"The classroom was bright and full of colorful posters. My new teacher had a warm, friendly smile." },
+            { text:"Write two or three sentences describing what you saw, heard, or felt during your memory.", exemplar:"The bike felt wobbly and shaky under me at first. The wind blew coolly against my face as I finally balanced." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:16, minSentences:4, traitWords:["but","suddenly","finally"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 sentences","Tells about a challenge you faced and how you solved it","Uses different words (not just repeating one)"],
+          hints:["What made it hard?","Who or what helped you?","How did you feel once it got easier?"],
+          storyInstruction:"Add a sentence showing how you got through the challenge.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["but","suddenly","finally"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Tells about a challenge you faced and how you solved it","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write four sentences about a time something was hard for you, and how you got through it.", exemplar:"Learning to ride a bike was very hard for me. I fell down many times and scraped my knee. But I kept practicing every single day. Finally, I could ride all the way down the street." },
+            { text:"Write four sentences about a time something was hard for you, and how you got through it.", exemplar:"My first spelling test was really scary for me. I did not study enough the night before. But my teacher gave me extra time to finish. Finally, I passed the test and felt so relieved." },
+            { text:"Write four sentences about a time something was hard for you, and how you got through it.", exemplar:"Moving to a new school was hard for me at first. I did not know anyone in my class. But a kind girl invited me to sit with her at lunch. Finally, I made my very first new friend." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:18, minSentences:4, traitWords:["first","next","then","after that","finally"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 sentences","Uses a linking word (First, Next, Then, Finally...)","Uses different words (not just repeating one)"],
+          hints:["What did you do first that day?","What happened after that?","How did the day end?"],
+          storyInstruction:"Add a sentence with a linking word (First, Next, Then, Finally) about your memory.",
+          storyTarget:{minWords:6, minSentences:1, traitWords:["first","next","then","after that","finally"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Uses a linking word (First, Next, Then, Finally...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write about a real day you remember. Use words like First, Next, Then, and Finally.", exemplar:"First, we woke up early and packed the car. Next, we drove for three hours to the amusement park. Then, we rode roller coasters all afternoon. Finally, we watched the fireworks before driving home." },
+            { text:"Write about a real day you remember. Use words like First, Next, Then, and Finally.", exemplar:"First, I woke up excited for my birthday. Next, my family sang happy birthday to me. Then, I opened all of my presents. Finally, we ate a big slice of cake together." },
+            { text:"Write about a real day you remember. Use words like First, Next, Then, and Finally.", exemplar:"First, we arrived at the beach early in the morning. Next, we built a huge sandcastle together. Then, we swam in the cool ocean water. Finally, we watched the sunset before going home." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:26, minSentences:5, traitWords:["i learned","from then on","now i know","i realized"], extraWordsBonus:6},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 5 sentences","Ends with what you learned or how you changed","Uses different words (not just repeating one)"],
+          hints:["What would you tell someone else who felt scared like you did?","How are you different now?","What was the most important moment?"],
+          storyInstruction:"Write your CLOSING sentence. What did you learn from this memory?",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["i learned","from then on","now i know","i realized"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Ends with what you learned or how you changed","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a full paragraph about a real memory. Include when/where it happened, what happened, how you felt, and what you learned.", exemplar:"Last winter, I tried ice skating for the very first time at our local rink. At first, I felt nervous and fell down again and again. My legs were shaky and my hands were cold inside my mittens. But my mom held my hand and helped me balance until I could skate on my own. I learned that it is okay to fall down, because trying again is what really matters." },
+            { text:"Write a full paragraph about a real memory. Include when/where it happened, what happened, how you felt, and what you learned.", exemplar:"When I was seven, I moved to a brand new town far away from my old friends. At first, I felt sad and a little scared to start a new school. Everything looked so different and unfamiliar to me. But a friendly boy in my class invited me to play at recess. I learned that making new friends can turn a scary change into something wonderful." },
+            { text:"Write a full paragraph about a real memory. Include when/where it happened, what happened, how you felt, and what you learned.", exemplar:"Two summers ago, I went camping with my family for the very first time. At first, I was afraid of the dark and all the strange nighttime sounds. My tent felt small and the woods seemed so big around us. But my dad told stories by the fire until I felt calm and safe. I learned that new experiences are not so scary once you give them a chance." }
+          ] }
+      ] },
+    'how-to-writing':{ title:'How-To Writing', sub:'Write real step-by-step instructions', icon:'🛠️', available:true, storyMode:true,
+      levels:[
+        { reps:2, scaffoldType:'wordbank-starter',
+          target:{minWords:6, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Tells WHAT you are teaching how to do","Uses different words (not just repeating one)"],
+          hints:["Is it something you do every day?","Is it something you're good at?","Would a friend want to learn this?"],
+          storyInstruction:"Now write the topic sentence for YOUR OWN how-to guide.",
+          storyStarters:["how to make a peanut butter sandwich","how to brush your teeth","how to tie your shoes","Write my own idea instead"],
+          storyTarget:{minWords:6, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Tells WHAT you are teaching how to do","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write one sentence that tells what you are going to teach us how to do.", starter:"Today I will teach you how to ___.", wordBank:["make a sandwich","brush your teeth","tie your shoes","plant a seed"], exemplar:"Today I will teach you how to make a sandwich." },
+            { text:"Write one sentence that tells what you are going to teach us how to do.", starter:"Today I will teach you how to ___.", wordBank:["wash your hands","build a tower","fly a kite","feed a pet"], exemplar:"Today I will teach you how to fly a kite." },
+            { text:"Write one sentence that tells what you are going to teach us how to do.", starter:"Today I will teach you how to ___.", wordBank:["ride a scooter","draw a cat","make a bed","pack a lunch"], exemplar:"Today I will teach you how to draw a cat." }
+          ] },
+        { reps:2, scaffoldType:'list', mode:'list',
+          target:{minItems:3, itemMaxWords:4},
+          checklist:["Has at least 3 items","Each item is a short word or phrase","Uses different words (not just repeating one)"],
+          hints:["What tools do you need?","What ingredients or materials?","Is there anything special needed?"],
+          storyInstruction:"Write the materials list for YOUR OWN how-to guide — what does someone need before starting?",
+          storyTarget:{minItems:3, itemMaxWords:4},
+          storyChecklist:["Has at least 3 items","Each item is a short word or phrase","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a list of at least 3 things you need before you start. Write one item on each line.", exemplar:"bread\npeanut butter\nknife" },
+            { text:"Write a list of at least 3 things you need before you start.", exemplar:"kite\nstring\nopen field" },
+            { text:"Write a list of at least 3 things you need before you start.", exemplar:"paper\npencil\neraser" }
+          ] },
+        { reps:3, scaffoldType:'starter',
+          target:{minWords:6, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Tells the FIRST step clearly","Uses different words (not just repeating one)"],
+          hints:["What's the very first thing you touch or do?","Does it need to happen before anything else?","Would this make sense to someone who has never done it?"],
+          storyInstruction:"Write the FIRST step of YOUR OWN how-to guide.",
+          storyTarget:{minWords:6, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Tells the FIRST step clearly","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write the first step of your how-to guide.", starter:"First, ___.", exemplar:"First, get two slices of bread." },
+            { text:"Write the first step of your how-to guide.", starter:"First, ___.", exemplar:"First, find an open field with no trees." },
+            { text:"Write the first step of your how-to guide.", starter:"First, ___.", exemplar:"First, draw two circles for the head and body." }
+          ] },
+        { reps:3, scaffoldType:'starter',
+          target:{minWords:10, minSentences:2, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Tells the NEXT two steps in order","Uses different words (not just repeating one)"],
+          hints:["What happens right after the first step?","What comes after that?","Are you skipping anything important?"],
+          storyInstruction:"Write the NEXT two steps of YOUR OWN how-to guide.",
+          storyTarget:{minWords:10, minSentences:2, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Tells the NEXT two steps in order","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write the next two steps of your how-to guide.", starter:"Next, ___. Then, ___.", exemplar:"Next, spread peanut butter on one slice. Then, put the other slice on top." },
+            { text:"Write the next two steps of your how-to guide.", starter:"Next, ___. Then, ___.", exemplar:"Next, tie the string to the kite. Then, hold the kite up in the wind." },
+            { text:"Write the next two steps of your how-to guide.", starter:"Next, ___. Then, ___.", exemplar:"Next, add two triangle ears. Then, draw two eyes and a nose." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["careful","don't forget","make sure","remember to","be careful"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Gives a helpful tip or warning (be careful, remember to...)","Uses different words (not just repeating one)"],
+          hints:["What mistake do people often make?","What's easy to forget?","What would make this safer or easier?"],
+          storyInstruction:"Add a helpful TIP or WARNING to YOUR OWN how-to guide.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["careful","don't forget","make sure","remember to","be careful"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives a helpful tip or warning (be careful, remember to...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a helpful tip or warning for someone following your guide.", exemplar:"Make sure to ask an adult before using a sharp knife." },
+            { text:"Write a helpful tip or warning for someone following your guide.", exemplar:"Remember to check that there are no power lines above the field." },
+            { text:"Write a helpful tip or warning for someone following your guide.", exemplar:"Don't forget to press lightly so you can erase mistakes easily." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["because","so that","this helps"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Explains WHY a step matters (because, so that...)","Uses different words (not just repeating one)"],
+          hints:["Why does this step matter?","What would happen if you skipped it?","How does it help the final result?"],
+          storyInstruction:"Add a sentence explaining WHY one of your steps matters.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["because","so that","this helps"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Explains WHY a step matters (because, so that...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Explain why one of your steps is important.", exemplar:"This step matters because the peanut butter can spill out if you press too hard." },
+            { text:"Explain why one of your steps is important.", exemplar:"You wait for wind because the kite cannot fly without it." },
+            { text:"Explain why one of your steps is important.", exemplar:"The eyes matter because they make the cat look friendly and alive." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:16, minSentences:4, traitWords:["first","next","then","after that","finally"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 sentences","Uses linking words (First, Next, Then, Finally) for every step","Uses different words (not just repeating one)"],
+          hints:["Does every step have its own linking word?","Are the steps in the right order?","Would someone be able to follow along?"],
+          storyInstruction:"Add one more clearly ordered step using a linking word (First, Next, Then, Finally).",
+          storyTarget:{minWords:6, minSentences:1, traitWords:["first","next","then","after that","finally"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Uses a linking word (First, Next, Then, Finally...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a full set of steps for a simple task. Use First, Next, Then, and Finally for every step.", exemplar:"First, wash your hands with soap. Next, wet your hands under water. Then, scrub for twenty seconds. Finally, dry your hands with a towel." },
+            { text:"Write a full set of steps for a simple task. Use First, Next, Then, and Finally for every step.", exemplar:"First, get your backpack. Next, put your lunch box inside. Then, add your homework folder. Finally, zip it closed." },
+            { text:"Write a full set of steps for a simple task. Use First, Next, Then, and Finally for every step.", exemplar:"First, get a cup and a spoon. Next, add cereal to the bowl. Then, pour in the milk. Finally, enjoy your breakfast." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["now you know","you did it","enjoy your","and that's how","great job"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Wraps up the guide (now you know, you did it...)","Uses different words (not just repeating one)"],
+          hints:["How does the finished result look or feel?","What should the reader do now?","How would you celebrate finishing?"],
+          storyInstruction:"Write the CLOSING sentence for YOUR OWN how-to guide.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["now you know","you did it","enjoy your","and that's how","great job"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Wraps up the guide (now you know, you did it...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a closing sentence for your how-to guide.", exemplar:"Now you know how to make a delicious peanut butter sandwich all by yourself!" },
+            { text:"Write a closing sentence for your how-to guide.", exemplar:"Now you know how to fly a kite on a windy afternoon!" },
+            { text:"Write a closing sentence for your how-to guide.", exemplar:"Now you know how to draw a cute cartoon cat!" }
+          ] }
+      ] },
+    'opinion-writing':{ title:'Opinion Writing', sub:'State an opinion and build real reasons to support it', icon:'💭', available:true, storyMode:true,
+      levels:[
+        { reps:2, scaffoldType:'wordbank-starter',
+          target:{minWords:6, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","States a clear opinion (I think, I believe...)","Uses different words (not just repeating one)"],
+          hints:["Would most people agree or disagree with you?","Is this really YOUR opinion?","Can you defend it with reasons?"],
+          storyInstruction:"State YOUR OWN opinion to start your paragraph.",
+          storyStarters:["the best season of the year","the best school subject","the best kind of pet","Write my own idea instead"],
+          storyTarget:{minWords:6, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","States a clear opinion (I think, I believe...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write one sentence stating your opinion.", starter:"I think ___ is the best ___.", wordBank:["pizza","summer","dogs","reading"], exemplar:"I think pizza is the best food." },
+            { text:"Write one sentence stating your opinion.", starter:"I think ___ is the best ___.", wordBank:["soccer","recess","chocolate","swimming"], exemplar:"I think soccer is the best sport." },
+            { text:"Write one sentence stating your opinion.", starter:"I think ___ is the best ___.", wordBank:["winter","art class","cats","board games"], exemplar:"I think winter is the best season." }
+          ] },
+        { reps:2, scaffoldType:'starter',
+          target:{minWords:8, minSentences:1, traitWords:["because","since"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives ONE reason (uses \"because\") for the opinion","Uses different words (not just repeating one)"],
+          hints:["What's the first reason someone would agree with you?","How does it make you feel?","What makes it better than the alternatives?"],
+          storyInstruction:"Add your FIRST reason for your opinion.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["because","since"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives ONE reason (uses \"because\") for the opinion","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write one sentence giving your first reason.", starter:"I think ___ is the best because ___.", exemplar:"I think pizza is the best because it has cheese, sauce, and toppings all together." },
+            { text:"Write one sentence giving your first reason.", starter:"I think ___ is the best because ___.", exemplar:"I think soccer is the best because you get to run and score goals with your team." },
+            { text:"Write one sentence giving your first reason.", starter:"I think ___ is the best because ___.", exemplar:"I think winter is the best because you get to build snowmen and go sledding." }
+          ] },
+        { reps:3, scaffoldType:'starter',
+          target:{minWords:10, minSentences:2, traitWords:["also","another reason","plus"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Gives a SECOND reason (also, another reason...)","Uses different words (not just repeating one)"],
+          hints:["What's a completely different reason?","Is there a reason about how it makes you feel?","Is there a reason about what you get to do?"],
+          storyInstruction:"Add a SECOND reason for your opinion, different from the first.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["also","another reason","plus"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives a SECOND reason (also, another reason...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write two sentences: give one more reason for your opinion, and explain it.", starter:"Also, ___. This is because ___.", exemplar:"Also, pizza can be made in so many different ways. This is because you can add any topping you like." },
+            { text:"Write two sentences: give one more reason for your opinion, and explain it.", starter:"Also, ___. This is because ___.", exemplar:"Also, soccer helps you make new friends. This is because you play as a team." },
+            { text:"Write two sentences: give one more reason for your opinion, and explain it.", starter:"Also, ___. This is because ___.", exemplar:"Also, winter clothes are cozy and fun. This is because scarves and mittens keep you warm." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["most importantly","the best reason","especially"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Gives a THIRD, strong reason (most importantly, especially...)","Uses different words (not just repeating one)"],
+          hints:["What's your strongest, most convincing reason?","Why does this reason matter most to you?","Would this reason convince someone who disagrees?"],
+          storyInstruction:"Add your THIRD and strongest reason.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["most importantly","the best reason","especially"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives a THIRD, strong reason (most importantly, especially...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write your third and strongest reason for your opinion.", exemplar:"Most importantly, pizza is a food that almost everyone in the world enjoys eating." },
+            { text:"Write your third and strongest reason for your opinion.", exemplar:"Most importantly, soccer keeps your whole body healthy and strong." },
+            { text:"Write your third and strongest reason for your opinion.", exemplar:"Most importantly, winter break means extra time with my whole family." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["for example","such as","like when"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Gives a specific EXAMPLE (for example, such as...)","Uses different words (not just repeating one)"],
+          hints:["Can you think of a real time this happened?","What's a specific detail, not just a general idea?","Would this example help someone picture it?"],
+          storyInstruction:"Add a specific EXAMPLE that supports one of your reasons.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["for example","such as","like when"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives a specific EXAMPLE (for example, such as...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Give a specific example that supports your opinion.", exemplar:"For example, my favorite kind has pepperoni, mushrooms, and extra cheese on top." },
+            { text:"Give a specific example that supports your opinion.", exemplar:"For example, I scored my very first goal during last year's tournament." },
+            { text:"Give a specific example that supports your opinion.", exemplar:"For example, last winter my whole family built a giant snow fort together." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:12, minSentences:2, traitWords:["some people think","but i think","however"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Mentions another view, then explains why you still disagree (however, but I think...)","Uses different words (not just repeating one)"],
+          hints:["What might someone who disagrees say?","Why do you still think you're right?","Can you be respectful about the other view?"],
+          storyInstruction:"Add a sentence or two: mention what someone who disagrees might think, then explain why you still feel differently.",
+          storyTarget:{minWords:10, minSentences:1, traitWords:["some people think","but i think","however"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Mentions another view, then explains why you still disagree","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write two sentences: mention what someone who disagrees might say, and explain why you still think you're right.", exemplar:"Some people think tacos are the best food. However, I still think pizza wins because everyone can pick their own toppings." },
+            { text:"Write two sentences: mention what someone who disagrees might say, and explain why you still think you're right.", exemplar:"Some people think basketball is more exciting. However, I still think soccer is best because anyone can learn to play it." },
+            { text:"Write two sentences: mention what someone who disagrees might say, and explain why you still think you're right.", exemplar:"Some people think summer is better because of the warm weather. However, I still love winter best because of the snow." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:16, minSentences:4, traitWords:["first","second","also","finally","in conclusion"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 4 sentences","Organizes reasons with linking words (First, Second, Also, Finally)","Uses different words (not just repeating one)"],
+          hints:["Does each reason have its own linking word?","Are your reasons in a sensible order?","Would a reader be able to follow your argument?"],
+          storyInstruction:"Add a sentence using a linking word (First, Second, Also, Finally) to organize your reasons.",
+          storyTarget:{minWords:6, minSentences:1, traitWords:["first","second","also","finally","in conclusion"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Uses a linking word (First, Second, Also, Finally...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a full opinion paragraph. Organize your reasons using First, Second, Also, and Finally.", exemplar:"I think recess is the best part of school. First, I get to play outside with my friends. Second, running around helps me feel less tired. Finally, it gives my brain a break before more learning." },
+            { text:"Write a full opinion paragraph. Organize your reasons using First, Second, Also, and Finally.", exemplar:"I think dogs make the best pets. First, they are always happy to see you. Second, they love to play and go on walks. Finally, they become like a real member of the family." },
+            { text:"Write a full opinion paragraph. Organize your reasons using First, Second, Also, and Finally.", exemplar:"I think art class is the best subject. First, I get to be creative with colors. Second, there are no wrong answers in art. Finally, I feel calm and happy while I paint." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["in conclusion","that is why","for these reasons","so i think"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Restates the opinion as a conclusion (in conclusion, that is why...)","Uses different words (not just repeating one)"],
+          hints:["Can you say your opinion again in a new way?","What's the ONE thing you want the reader to remember?","Does this feel like a strong ending?"],
+          storyInstruction:"Write the CONCLUDING sentence that restates YOUR OWN opinion.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["in conclusion","that is why","for these reasons","so i think"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Restates the opinion as a conclusion (in conclusion, that is why...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a concluding sentence that restates your opinion.", exemplar:"In conclusion, pizza is the best food because everyone can enjoy it their own way." },
+            { text:"Write a concluding sentence that restates your opinion.", exemplar:"For these reasons, soccer will always be the best sport in my opinion." },
+            { text:"Write a concluding sentence that restates your opinion.", exemplar:"That is why winter is my favorite season of them all." }
+          ] }
+      ] }
+  } },
+  3:{ label:'Grade 3', sub:'Ages 8–9', units:{
+    'paragraphs':{
+      title:'Paragraphs', sub:'Build one complete paragraph — topic, details, and a conclusion', icon:'📄', available:true, storyMode:true,
+      levels:[
+        { reps:2, scaffoldType:'wordbank-starter',
+          target:{minWords:6, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Introduces ONE clear topic","Uses different words (not just repeating one)"],
+          hints:["What's one thing you know a lot about?","What's something you could explain to a friend?","What's a specific topic, not too broad?"],
+          storyInstruction:"Write the topic sentence for YOUR OWN paragraph. What is it about?",
+          storyStarters:["my favorite hobby","an animal I find interesting","a place I would like to visit","Write my own idea instead"],
+          storyTarget:{minWords:6, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Introduces ONE clear topic","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a topic sentence for a paragraph. What are you going to tell us about?", starter:"Let me tell you about ___.", wordBank:["my favorite hobby","my pet","my best friend"], exemplar:"Let me tell you about my favorite hobby, drawing." },
+            { text:"Write a topic sentence for a paragraph. What are you going to tell us about?", starter:"Let me tell you about ___.", wordBank:["my weekend","my family","my school"], exemplar:"Let me tell you about my weekend at the lake." },
+            { text:"Write a topic sentence for a paragraph. What are you going to tell us about?", starter:"Let me tell you about ___.", wordBank:["my favorite book","my favorite game","my favorite season"], exemplar:"Let me tell you about my favorite book series." }
+          ] },
+        { reps:2, scaffoldType:'starter',
+          target:{minWords:8, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives ONE clear supporting detail","Uses different words (not just repeating one)"],
+          hints:["What's the first thing someone should know?","Why does this detail support your topic?","Can you be specific instead of general?"],
+          storyInstruction:"Write your FIRST supporting detail sentence.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives ONE clear supporting detail","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write your first supporting detail.", starter:"First, ___.", exemplar:"First, drawing lets me create anything I can imagine on paper." },
+            { text:"Write your first supporting detail.", starter:"First, ___.", exemplar:"First, we swam in the cool lake water all afternoon." },
+            { text:"Write your first supporting detail.", starter:"First, ___.", exemplar:"First, the main character goes on an exciting adventure in the first book." }
+          ] },
+        { reps:3, scaffoldType:'starter',
+          target:{minWords:10, minSentences:2, traitWords:["second","also","because"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Gives a SECOND detail and explains it","Uses different words (not just repeating one)"],
+          hints:["What's a completely different detail?","Why does it matter to you?","Does it support your topic sentence?"],
+          storyInstruction:"Add your SECOND detail to the story of your paragraph.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["second","also","because"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives a SECOND detail","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write two sentences: give a second detail, and explain why it matters.", starter:"Second, ___. This matters because ___.", exemplar:"Second, I can practice drawing anywhere I go. This matters because I always have paper and a pencil with me." },
+            { text:"Write two sentences: give a second detail, and explain why it matters.", starter:"Second, ___. This matters because ___.", exemplar:"Second, my dad taught me how to skip rocks. This matters because it was something we did together." },
+            { text:"Write two sentences: give a second detail, and explain why it matters.", starter:"Second, ___. This matters because ___.", exemplar:"Second, the characters become close friends by the end. This matters because it makes the story feel real." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:8, minSentences:1, traitWords:["finally","third","last"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives a THIRD detail (Finally, Third, Last...)","Uses different words (not just repeating one)"],
+          hints:["What's your last supporting detail?","Have you already used this idea?","Does it still relate to your topic?"],
+          storyInstruction:"Add your THIRD and final supporting detail.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["finally","third","last"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives a THIRD detail (Finally, Third, Last...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write your third and final supporting detail.", exemplar:"Finally, my art teacher says my drawings get better every single week." },
+            { text:"Write your third and final supporting detail.", exemplar:"Finally, we roasted marshmallows over a campfire as the sun went down." },
+            { text:"Write your third and final supporting detail.", exemplar:"Finally, the ending of the book surprised me in the best way." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:8, minSentences:1, traitWords:["for example","such as","specifically"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives a specific EXAMPLE (for example, such as...)","Uses different words (not just repeating one)"],
+          hints:["Can you think of a real, specific moment?","What's a detail that proves your point?","Would this help a reader picture it?"],
+          storyInstruction:"Add a specific EXAMPLE that makes one of your details stronger.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["for example","such as","specifically"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Gives a specific EXAMPLE (for example, such as...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Give a specific example that makes one of your details stronger.", exemplar:"For example, I once drew a whole comic book about a superhero dog." },
+            { text:"Give a specific example that makes one of your details stronger.", exemplar:"For example, I found a rock shaped exactly like a heart." },
+            { text:"Give a specific example that makes one of your details stronger.", exemplar:"For example, my favorite character uses a magic sword to save the town." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:8, minSentences:1, traitWords:["big","small","soft","fuzzy","loud","quiet","warm","cold","bright","colorful","shiny","golden","sparkl","mysterious","exciting","dark","magical"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a vivid describing word instead of a plain one","Uses different words (not just repeating one)"],
+          hints:["What's a more exciting word than 'nice' or 'good'?","What color, size, or feeling could you add?","Can the reader picture it clearly?"],
+          storyInstruction:"Add one more vivid, descriptive detail to your paragraph.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["big","small","soft","fuzzy","loud","quiet","warm","cold","bright","colorful","shiny","golden","sparkl","mysterious","exciting","dark","magical"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a vivid describing word instead of a plain one","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Add a vivid, descriptive detail to your paragraph.", exemplar:"My colorful markers make every drawing bright and exciting." },
+            { text:"Add a vivid, descriptive detail to your paragraph.", exemplar:"The warm golden sun made the water sparkle like diamonds." },
+            { text:"Add a vivid, descriptive detail to your paragraph.", exemplar:"The mysterious old castle in the story felt dark and magical." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["also","in addition","however","besides"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Connects ideas smoothly with a linking word (also, in addition, however...)","Uses different words (not just repeating one)"],
+          hints:["Can you connect two ideas you've already written?","Does one detail relate to another?","Would this help your paragraph flow better?"],
+          storyInstruction:"Add a sentence that connects two of your ideas together using a linking word.",
+          storyTarget:{minWords:10, minSentences:1, traitWords:["also","in addition","however","besides"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Connects ideas smoothly with a linking word (also, in addition, however...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a sentence that connects two of your ideas using a linking word.", exemplar:"In addition, drawing also helps me feel calm when I am upset." },
+            { text:"Write a sentence that connects two of your ideas using a linking word.", exemplar:"Besides swimming, we also played games together on the sandy shore." },
+            { text:"Write a sentence that connects two of your ideas using a linking word.", exemplar:"In addition, I have already started reading the second book in the series." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["in conclusion","overall","as you can see","that is why"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Restates the topic as a conclusion (in conclusion, overall...)","Uses different words (not just repeating one)"],
+          hints:["Can you say your topic again in a new way?","What's the one thing you want the reader to remember?","Does this feel like a strong ending?"],
+          storyInstruction:"Write the CONCLUDING sentence that wraps up your paragraph.",
+          storyTarget:{minWords:10, minSentences:1, traitWords:["in conclusion","overall","as you can see","that is why"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Restates the topic as a conclusion (in conclusion, overall...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a concluding sentence for your paragraph.", exemplar:"Overall, drawing will always be my favorite way to spend my free time." },
+            { text:"Write a concluding sentence for your paragraph.", exemplar:"As you can see, that weekend at the lake was one I will never forget." },
+            { text:"Write a concluding sentence for your paragraph.", exemplar:"In conclusion, this book series is definitely worth reading for any adventure fan." }
+          ] }
+      ] },
+    'descriptive-writing':{
+      title:'Descriptive Writing', sub:'Use your five senses and vivid words to bring a description to life', icon:'🎨', available:true, storyMode:true,
+      levels:[
+        { reps:2, scaffoldType:'wordbank-starter',
+          target:{minWords:6, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Tells us WHAT you are describing","Uses different words (not just repeating one)"],
+          hints:["Is it a place, a thing, or a moment?","Could you picture it clearly in your head?","Is it specific enough to describe in detail?"],
+          storyInstruction:"Write a sentence telling us WHAT you are going to describe.",
+          storyStarters:["my bedroom","a rainy day","a busy city street","Write my own idea instead"],
+          storyTarget:{minWords:6, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Tells us WHAT you are describing","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a sentence telling us what you are going to describe.", starter:"I want to describe ___.", wordBank:["my bedroom","my backyard","my classroom"], exemplar:"I want to describe my cozy little bedroom." },
+            { text:"Write a sentence telling us what you are going to describe.", starter:"I want to describe ___.", wordBank:["a rainy day","a sunny day","a snowy day"], exemplar:"I want to describe a stormy rainy day." },
+            { text:"Write a sentence telling us what you are going to describe.", starter:"I want to describe ___.", wordBank:["a busy city street","a quiet forest","a crowded beach"], exemplar:"I want to describe a busy city street." }
+          ] },
+        { reps:2, scaffoldType:'starter',
+          target:{minWords:8, minSentences:1, traitWords:["big","small","soft","fuzzy","loud","quiet","warm","cold","bright","colorful","shiny","golden","dark","tall","tiny","gray","glass"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a describing word for what you SEE","Uses different words (not just repeating one)"],
+          hints:["What colors do you see?","What shapes or sizes stand out?","What's in the foreground vs. background?"],
+          storyInstruction:"Add a sentence describing what you SEE.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["big","small","soft","fuzzy","loud","quiet","warm","cold","bright","colorful","shiny","golden","dark","tall","tiny","gray","glass"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a describing word for what you SEE","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a sentence describing what you see.", starter:"I can see ___.", exemplar:"I can see my colorful blankets piled high on my soft bed." },
+            { text:"Write a sentence describing what you see.", starter:"I can see ___.", exemplar:"I can see dark gray clouds rolling across the stormy sky." },
+            { text:"Write a sentence describing what you see.", starter:"I can see ___.", exemplar:"I can see bright yellow taxis zooming past tall glass buildings." }
+          ] },
+        { reps:3, scaffoldType:'starter',
+          target:{minWords:10, minSentences:2, traitWords:["sounds like","like a"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 2 sentences","Describes a SOUND (uses \"sounds like\")","Uses different words (not just repeating one)"],
+          hints:["Is the sound loud or soft?","Does it happen once or over and over?","What does it remind you of?"],
+          storyInstruction:"Add a sentence or two describing a SOUND.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["sounds like","like a"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Describes a SOUND (uses \"sounds like\")","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write two sentences describing a sound. What does it sound like?", starter:"I can hear ___. It sounds like ___.", exemplar:"I can hear my fan humming softly. It sounds like a gentle whisper." },
+            { text:"Write two sentences describing a sound. What does it sound like?", starter:"I can hear ___. It sounds like ___.", exemplar:"I can hear raindrops tapping on my window. It sounds like tiny drums." },
+            { text:"Write two sentences describing a sound. What does it sound like?", starter:"I can hear ___. It sounds like ___.", exemplar:"I can hear car horns honking loudly. It sounds like a noisy song." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:8, minSentences:1, traitWords:["soft","rough","smooth","bumpy","cold","warm","fuzzy","sticky","slippery","scratchy","icy","sharp"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a describing word for how it FEELS to touch","Uses different words (not just repeating one)"],
+          hints:["Is it soft, rough, cold, or warm?","What would happen if you touched it?","Does the texture change?"],
+          storyInstruction:"Add a sentence describing how something FEELS to touch.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["soft","rough","smooth","bumpy","cold","warm","fuzzy","sticky","slippery","scratchy","icy","sharp"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a describing word for how it FEELS to touch","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Describe how something in your description feels to touch.", exemplar:"My fuzzy blanket feels warm and soft against my skin." },
+            { text:"Describe how something in your description feels to touch.", exemplar:"The cold raindrops feel sharp and icy on my face." },
+            { text:"Describe how something in your description feels to touch.", exemplar:"The rough sidewalk feels bumpy under my sneakers." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:8, minSentences:1, traitWords:["smells like","tastes like","smell of"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a describing word for SMELL or TASTE","Uses different words (not just repeating one)"],
+          hints:["Is there a smell in the air?","Does anything taste like something else?","Is the smell strong or faint?"],
+          storyInstruction:"Add a sentence describing a SMELL or TASTE.",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["smells like","tastes like","smell of"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a describing word for SMELL or TASTE","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Describe a smell or taste in your description.", exemplar:"My room smells like the sweet vanilla candle on my desk." },
+            { text:"Describe a smell or taste in your description.", exemplar:"The air smells like fresh wet grass after the rain." },
+            { text:"Describe a smell or taste in your description.", exemplar:"The street smells like warm pretzels from a nearby cart." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:8, minSentences:1, traitWords:["like a","as a","as if"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a simile (like a..., as...as...)","Uses different words (not just repeating one)"],
+          hints:["What everyday thing could you compare it to?","Does it move, feel, or sound like something else?","Would 'as ___ as ___' work here?"],
+          storyInstruction:"Add a sentence using a SIMILE (like a ___, as ___ as ___).",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["like a","as a","as if"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a simile (like a..., as...as...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a sentence using a simile.", exemplar:"My bed feels as soft as a fluffy cloud." },
+            { text:"Write a sentence using a simile.", exemplar:"The thunder crashed like a giant drum in the sky." },
+            { text:"Write a sentence using a simile.", exemplar:"The city moved as fast as a river of cars." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:8, minSentences:1, traitWords:["dashed","whispered","sparkled","crashed","tiptoed","zoomed","glistened","roared","darted","gleamed"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a strong, specific verb instead of a plain one","Uses different words (not just repeating one)"],
+          hints:["Instead of 'went', could you use 'dashed' or 'zoomed'?","Instead of 'said', could you use 'whispered'?","Does the verb match the mood of your description?"],
+          storyInstruction:"Add a sentence with a strong, specific VERB (instead of a plain one like 'went' or 'said').",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["dashed","whispered","sparkled","crashed","tiptoed","zoomed","glistened","roared","darted","gleamed"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses a strong, specific verb instead of a plain one","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a sentence using a strong, specific verb.", exemplar:"My star stickers glistened on the ceiling above my bed." },
+            { text:"Write a sentence using a strong, specific verb.", exemplar:"Thunder roared across the dark and heavy sky." },
+            { text:"Write a sentence using a strong, specific verb.", exemplar:"Yellow taxis zoomed between the crowded city blocks." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["makes me feel","overall","altogether"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Ends with the overall feeling or mood of the description","Uses different words (not just repeating one)"],
+          hints:["How does this place or thing make you feel overall?","What's the one word that sums up the mood?","Would a reader feel the same way?"],
+          storyInstruction:"Write the CLOSING sentence that sums up the overall feeling of your description.",
+          storyTarget:{minWords:10, minSentences:1, traitWords:["makes me feel","overall","altogether"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Ends with the overall feeling or mood of the description","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a closing sentence that sums up the overall feeling of your description.", exemplar:"Overall, my bedroom makes me feel calm and completely at home." },
+            { text:"Write a closing sentence that sums up the overall feeling of your description.", exemplar:"Altogether, a rainy day makes me feel cozy and relaxed inside." },
+            { text:"Write a closing sentence that sums up the overall feeling of your description.", exemplar:"Overall, the city street makes me feel excited and wide awake." }
+          ] }
+      ] },
+    'persuasive-writing':{
+      title:'Persuasive Writing', sub:'Build a real persuasive piece using techniques that convince a reader', icon:'📢', available:true, storyMode:true,
+      levels:[
+        { reps:2, scaffoldType:'wordbank-starter',
+          target:{minWords:8, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","States a clear position on an issue","Uses different words (not just repeating one)"],
+          hints:["Is this something people disagree about?","Can you defend this position with reasons?","Is it stated clearly and confidently?"],
+          storyInstruction:"State YOUR OWN position on an issue to start your persuasive piece.",
+          storyStarters:["schools should have more recess","kids should read every day","students should have less homework","Write my own idea instead"],
+          storyTarget:{minWords:8, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","States a clear position on an issue","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"State your position on an issue.", starter:"I believe that ___.", wordBank:["schools should have more recess","kids should read every day","students should have less homework"], exemplar:"I believe that schools should have more recess every day." },
+            { text:"State your position on an issue.", starter:"I believe that ___.", wordBank:["everyone should recycle","kids should play outside more","students should get more art class"], exemplar:"I believe that everyone should recycle to help our planet." },
+            { text:"State your position on an issue.", starter:"I believe that ___.", wordBank:["libraries should stay open later","kids should learn to cook","school lunches should be healthier"], exemplar:"I believe that school lunches should be healthier for kids." }
+          ] },
+        { reps:2, scaffoldType:'starter',
+          target:{minWords:10, minSentences:1, traitWords:["because"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Gives ONE reason (uses \"because\")","Uses different words (not just repeating one)"],
+          hints:["What's your strongest reason?","Does this reason clearly support your position?","Would this convince someone who disagrees?"],
+          storyInstruction:"Add your FIRST reason, using \"because.\"",
+          storyTarget:{minWords:10, minSentences:1, traitWords:["because"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Gives ONE reason (uses \"because\")","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Give one reason for your position, using \"because.\"", starter:"One reason is ___, because ___.", exemplar:"One reason is that recess helps us focus better, because our brains need a break." },
+            { text:"Give one reason for your position, using \"because.\"", starter:"One reason is ___, because ___.", exemplar:"One reason is that recycling saves resources, because we can reuse materials instead of wasting them." },
+            { text:"Give one reason for your position, using \"because.\"", starter:"One reason is ___, because ___.", exemplar:"One reason is that healthy lunches give us energy, because our bodies need good fuel to learn." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:6, minSentences:1, traitWords:[]},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Asks a question to make the reader think","Uses different words (not just repeating one)"],
+          hints:["What question would make a reader stop and think?","Could you challenge the reader's assumptions?","Does it end with a question mark?"],
+          storyInstruction:"Write a rhetorical QUESTION that makes the reader think about your position.",
+          storyTarget:{minWords:6, minSentences:1, traitWords:[]},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 6 words","Asks a question to make the reader think","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a question that makes the reader think about your position.", exemplar:"Don't you think kids deserve more time to play and relax?" },
+            { text:"Write a question that makes the reader think about your position.", exemplar:"Have you ever thought about how much trash ends up in our oceans?" },
+            { text:"Write a question that makes the reader think about your position.", exemplar:"Wouldn't you rather eat a lunch that actually tastes good and is healthy?" }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:8, minSentences:1, traitWords:["you","your"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Speaks directly to the reader (uses \"you\" or \"your\")","Uses different words (not just repeating one)"],
+          hints:["How would this affect the reader personally?","Can you picture them reading this?","Does it feel like you're talking right to them?"],
+          storyInstruction:"Add a sentence that speaks directly to the reader using \"you\" or \"your.\"",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["you","your"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Speaks directly to the reader (uses \"you\" or \"your\")","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a sentence that speaks directly to the reader.", exemplar:"You would feel so much happier with more time to play outside." },
+            { text:"Write a sentence that speaks directly to the reader.", exemplar:"You can make a real difference just by recycling one bottle a day." },
+            { text:"Write a sentence that speaks directly to the reader.", exemplar:"Your body will thank you for eating fresh fruits and vegetables." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["many people","studies show","most kids","research shows"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Uses a fact-sounding claim (many people, studies show...)","Uses different words (not just repeating one)"],
+          hints:["What sounds like a fact, not just your opinion?","Could you say 'many people' or 'studies show'?","Does this make your position sound more convincing?"],
+          storyInstruction:"Add a sentence using a fact-sounding claim (many people, studies show...).",
+          storyTarget:{minWords:10, minSentences:1, traitWords:["many people","studies show","most kids","research shows"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Uses a fact-sounding claim (many people, studies show...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a sentence using a fact-sounding claim.", exemplar:"Many people believe that kids today do not get enough time to play outside." },
+            { text:"Write a sentence using a fact-sounding claim.", exemplar:"Studies show that recycling one ton of paper saves seventeen whole trees." },
+            { text:"Write a sentence using a fact-sounding claim.", exemplar:"Most kids agree that they focus better after eating a healthy lunch." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:8, minSentences:1, traitWords:["imagine","think about how","it would feel"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses an emotional appeal (imagine, think about how...)","Uses different words (not just repeating one)"],
+          hints:["How could you make the reader feel something?","What would make them care about this?","Can you paint a picture with feelings?"],
+          storyInstruction:"Add a sentence using an emotional appeal (imagine, think about how...).",
+          storyTarget:{minWords:8, minSentences:1, traitWords:["imagine","think about how","it would feel"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 8 words","Uses an emotional appeal (imagine, think about how...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a sentence using an emotional appeal.", exemplar:"Imagine how much happier every student would feel with extra recess time." },
+            { text:"Write a sentence using an emotional appeal.", exemplar:"Think about how sad it would feel to see animals hurt by pollution." },
+            { text:"Write a sentence using an emotional appeal.", exemplar:"Imagine how proud you would feel eating a lunch that keeps you strong." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["some people say","but","however"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Mentions another view, then explains why you still disagree (however, but...)","Uses different words (not just repeating one)"],
+          hints:["What might someone who disagrees say?","Why do you still think you're right?","Can you be respectful about the other view?"],
+          storyInstruction:"Add a sentence: mention another view, then explain why you still disagree.",
+          storyTarget:{minWords:10, minSentences:1, traitWords:["some people say","but","however"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Mentions another view, then explains why you still disagree (however, but...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Mention another view, then explain why you still disagree.", exemplar:"Some people say recess wastes learning time, but kids actually focus better afterward." },
+            { text:"Mention another view, then explain why you still disagree.", exemplar:"Some people say recycling takes too much effort, but small steps make a big difference." },
+            { text:"Mention another view, then explain why you still disagree.", exemplar:"Some people say healthy food costs too much, but simple fruits and vegetables are affordable." }
+          ] },
+        { reps:3, scaffoldType:'checklist-only',
+          target:{minWords:10, minSentences:1, traitWords:["so please","let's","join me","take action","do your part"], extraWordsBonus:4},
+          checklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Ends with a call to action (so please, let's, join me...)","Uses different words (not just repeating one)"],
+          hints:["What do you want the reader to actually DO?","Can you ask them directly to take action?","Does this feel like a strong, convincing ending?"],
+          storyInstruction:"Write the CLOSING sentence — a call to action for your reader.",
+          storyTarget:{minWords:10, minSentences:1, traitWords:["so please","let's","join me","take action","do your part"], extraWordsBonus:4},
+          storyChecklist:["Starts with a capital letter","Ends with a period, ! or ?","Has at least 10 words","Ends with a call to action (so please, let's, join me...)","Uses different words (not just repeating one)"],
+          prompts:[
+            { text:"Write a closing call to action.", exemplar:"So please, let's give every student more time for recess each day." },
+            { text:"Write a closing call to action.", exemplar:"Let's all do our part and recycle a little more starting today." },
+            { text:"Write a closing call to action.", exemplar:"So please, join me in asking for healthier lunches at our school." }
+          ] }
+      ] }
+  } }
+};
+
+const QUIZ = {
+  'sentences-about-me':[
+    [ {q:"Which sentence starts correctly?", opts:["dog is my favorite animal.","Dog is my favorite animal.","DOG is my favorite animal","dog Is my favorite animal."], a:1},
+      {q:"Which sentence ends correctly?", opts:["My favorite animal is a cat","My favorite animal is a cat.","my favorite animal is a cat?","My Favorite Animal Is A Cat"], a:1} ],
+    [ {q:"Which sentence gives a reason using \"because\"?", opts:["I like pizza and pasta.","Pizza is a food.","I like pizza because it is cheesy.","My favorite food is pizza"], a:2},
+      {q:"Which word tells us WHY?", opts:["and","because","the","is"], a:1} ],
+    [ {q:"Which is TWO complete sentences?", opts:["I like to swim it is fun","I like to swim. It is fun.","i like to swim. it is fun","I like to swim, it is fun"], a:1},
+      {q:"A second sentence should start with a...", opts:["lowercase letter","number","capital letter","comma"], a:2} ],
+    [ {q:"Which sentence stays on topic if you're writing about yourself?", opts:["My dog likes bones.","I am good at soccer.","The sky is blue.","Cats are animals."], a:1},
+      {q:"How many sentences should this level have, at least?", opts:["1","2","3","5"], a:2} ],
+    [ {q:"Which sentence uses a describing word?", opts:["My dog is a dog.","My dog is fluffy and small.","I have a dog.","Dog dog dog."], a:1},
+      {q:"A describing word tells us...", opts:["The name of a person","What something is like (big, soft, yummy)","A number","A place"], a:1} ],
+    [ {q:"How many sentences should this level have, at least?", opts:["1","2","4","10"], a:2},
+      {q:"Which detail belongs in a story about your day?", opts:["What you did that day","The capital of France","A math fact","Nothing, skip it"], a:0} ],
+    [ {q:"Which word helps show what happened FIRST?", opts:["Also","First","The","Dog"], a:1},
+      {q:"Which sentence uses a linking word?", opts:["I woke up. I ate breakfast.","First, I woke up. Next, I ate breakfast.","I woke I ate.","Woke breakfast."], a:1} ],
+    [ {q:"What comes FIRST in a paragraph?", opts:["Closing sentence","Detail sentence","Topic sentence","A question"], a:2},
+      {q:"A detail sentence gives...", opts:["The title","More information about the topic","A closing thought","Nothing important"], a:1} ]
+  ],
+  'labels-lists':[
+    [ {q:"Which is a good LABEL for a picture of a dog?", opts:["The dog is running in the park today.","dog","Dogs are my favorite animal because they are loyal.","A dog is a type of pet that many people have."], a:1},
+      {q:"A label is usually...", opts:["A long sentence","One or two words","A whole paragraph","A question"], a:1} ],
+    [ {q:"Which label uses a describing word?", opts:["dog","big brown dog","the dog","dog dog dog"], a:1},
+      {q:"A describing word tells us about...", opts:["Color, size, or shape","A person's name","A number","A place far away"], a:0} ],
+    [ {q:"Which is written correctly as a LIST?", opts:["towel sunscreen swimsuit all together","towel, sunscreen, swimsuit (one per line)","I packed a towel and sunscreen and a swimsuit for my trip.","Towel."], a:1},
+      {q:"A list should have...", opts:["Only 1 item","Several short items","One giant sentence","No items"], a:1} ],
+    [ {q:"How many items should this list have, at least?", opts:["1","2","4","10"], a:2},
+      {q:"Which item is written the right way for a list?", opts:["lion is a big animal that lives in Africa and roars loudly","lion","Lions.","LIONLIONLION"], a:1} ],
+    [ {q:"In a list with 2 categories, how many items go in each category?", opts:["All in one category","Split evenly between both","It doesn't matter","Only 1 total"], a:1},
+      {q:"Which pair belongs in the SAME category (both fruits)?", opts:["apple, carrot","apple, banana","carrot, broccoli","banana, broccoli"], a:1} ],
+    [ {q:"Which is the correct length for a diagram label?", opts:["A full paragraph","1–2 words","10 words","A question"], a:1},
+      {q:"Which is a correct part label?", opts:["The roof is the top part of a house that keeps out rain.","roof","Roofs are important.","roof roof roof"], a:1} ],
+    [ {q:"How many items should this list have, at least?", opts:["2","3","5","1"], a:2},
+      {q:"Which item fits a grocery list for pizza?", opts:["cheese","bicycle","homework","umbrella"], a:0} ],
+    [ {q:"Which word shows what happens FIRST in a list of steps?", opts:["Finally","Next","First","Also"], a:2},
+      {q:"Which is written as a STEP, not a full story?", opts:["First, get bread.","One day I decided to make a sandwich because I was hungry after school.","Sandwiches are yummy and I like them a lot.","I really enjoy making sandwiches with my family on weekends."], a:0} ]
+  ],
+  'simple-stories':[
+    [ {q:"Which sentence introduces a character?", opts:["The sky is blue.","Once there was a brave little dog.","It was raining outside.","The end."], a:1},
+      {q:"A character in a story is...", opts:["The place where the story happens","A person or animal in the story","The title of the story","A math fact"], a:1} ],
+    [ {q:"Which sentence describes a SETTING?", opts:["The dog ran fast.","One day, in a dark spooky forest, something happened.","He was happy.","The end."], a:1},
+      {q:"A setting tells us...", opts:["Who is in the story","Where the story happens","How the story ends","A character's name"], a:1} ],
+    [ {q:"Which word shows a problem is happening?", opts:["and","but","the","is"], a:1},
+      {q:"Which sentence shows a PROBLEM?", opts:["The princess wanted to go to the ball.","But then, she lost her shoe!","The princess was happy.","The ball was fun."], a:1} ],
+    [ {q:"A story needs...", opts:["Only an ending","A beginning, middle, and end","Only a beginning","No characters"], a:1},
+      {q:"Which part of a story comes LAST?", opts:["The beginning","The middle","The end","The title"], a:2} ],
+    [ {q:"Which sentence uses a describing word?", opts:["The knight was a knight.","The knight wore shiny silver armor.","There was a knight.","Knight knight knight."], a:1},
+      {q:"Describing words help the reader...", opts:["Skip the story","Picture the story in their mind","Forget the story","Read faster"], a:1} ],
+    [ {q:"Which word often shows a problem gets SOLVED?", opts:["but","suddenly","finally","maybe"], a:2},
+      {q:"A solution is...", opts:["The problem itself","How the problem gets fixed","The title of the story","The setting"], a:1} ],
+    [ {q:"Which word shows what happens FIRST?", opts:["Finally","First","Also","The"], a:1},
+      {q:"Which sentence uses a sequence word?", opts:["The girl went to school.","Next, she read a book.","She likes school.","School is fun."], a:1} ],
+    [ {q:"What should a story paragraph have?", opts:["Just one sentence","A character, a problem, and a solution","Only a title","Random facts"], a:1},
+      {q:"Which phrase shows a story is ENDING?", opts:["Once there was...","One day...","In the end...","Suddenly..."], a:2} ]
+  ],
+  'personal-narratives':[
+    [ {q:"A personal narrative is about...", opts:["A made-up character","Something that REALLY happened to you","A fairy tale","A math problem"], a:1},
+      {q:"Which sentence sounds like a REAL memory?", opts:["Once upon a time, a dragon flew.","I will never forget the time I rode a bike.","The robot lived on Mars.","A princess lived in a castle."], a:1} ],
+    [ {q:"Which sentence tells WHEN and WHERE something happened?", opts:["I like pizza.","It happened last summer, at my grandma's house.","Dogs are pets.","The sky is blue."], a:1},
+      {q:"Telling when and where helps the reader...", opts:["Skip the story","Picture the memory clearly","Forget the story","Read faster"], a:1} ],
+    [ {q:"Which sentence names a FEELING?", opts:["The pool was blue.","I felt so nervous before my swimming lesson.","It was Tuesday.","The water was cold."], a:1},
+      {q:"Why do writers include feelings in a personal narrative?", opts:["To confuse the reader","To help the reader understand the experience","Feelings don't belong in stories","To make the story shorter"], a:1} ],
+    [ {q:"A personal narrative needs...", opts:["Only a beginning","A beginning, middle, and end","Only an ending","No real events"], a:1},
+      {q:"Which detail belongs in a TRUE memory story?", opts:["A dragon breathing fire","Something that actually happened to you","A talking animal","A made-up planet"], a:1} ],
+    [ {q:"Which sentence uses a describing (sensory) detail?", opts:["It happened.","The campfire crackled loudly in the dark night.","I went there.","It was fine."], a:1},
+      {q:"Sensory details describe...", opts:["What you saw, heard, felt, smelled, or tasted","Only numbers","A character's name","The title"], a:0} ],
+    [ {q:"Which word shows a challenge is being described?", opts:["and","hard","the","is"], a:1},
+      {q:"Which sentence shows overcoming a challenge?", opts:["I fell down many times.","Finally, I could ride all the way down the street.","It was a bike.","The street was long."], a:1} ],
+    [ {q:"Which word shows what happened FIRST?", opts:["Finally","First","Also","The"], a:1},
+      {q:"Which sentence uses a sequence word?", opts:["We went to the park.","Next, we rode the roller coasters.","The park was fun.","Roller coasters are fast."], a:1} ],
+    [ {q:"Which phrase shows the writer is sharing what they LEARNED?", opts:["Once upon a time...","One day...","I learned that...","The end."], a:2},
+      {q:"A good ending for a personal narrative...", opts:["Just stops mid-sentence","Shares a feeling or lesson from the experience","Lists random facts","Repeats the first sentence exactly"], a:1} ]
+  ],
+  'how-to-writing':[
+    [ {q:"A how-to topic sentence should tell the reader...", opts:["A secret","What you are going to teach them","Your favorite color","A made-up story"], a:1},
+      {q:"Which sentence is a good how-to topic sentence?", opts:["Sandwiches are yummy.","Today I will teach you how to make a sandwich.","I like bread.","The end."], a:1} ],
+    [ {q:"A materials list tells the reader...", opts:["What they need before starting","How the story ends","A character's name","The weather"], a:0},
+      {q:"Which is written correctly as a materials list item?", opts:["bread","You will need some bread for this recipe","Bread is a food","bread bread bread"], a:0} ],
+    [ {q:"The FIRST step in a how-to guide should...", opts:["Come last","Happen before any other step","Be a warning","Be the ending"], a:1},
+      {q:"Which sentence sounds like a clear first step?", opts:["Enjoy your sandwich!","First, get two slices of bread.","Sandwiches are great.","Bread is soft."], a:1} ],
+    [ {q:"Steps in a how-to guide should be written...", opts:["In any order","In the order you do them","Backwards","All in one sentence"], a:1},
+      {q:"Which shows two steps in the right order?", opts:["Then, put the slices together. Next, spread peanut butter.","Next, spread peanut butter. Then, put the slices together.","Peanut butter slices together.","Bread is soft and slices are thin."], a:1} ],
+    [ {q:"A helpful tip or warning helps the reader...", opts:["Get confused","Avoid a mistake or stay safe","Skip a step","Read faster"], a:1},
+      {q:"Which sentence is a helpful tip?", opts:["Bread is a food.","Make sure to ask an adult before using a sharp knife.","Sandwiches are round.","The end."], a:1} ],
+    [ {q:"Which word helps explain WHY a step matters?", opts:["and","because","the","is"], a:1},
+      {q:"Which sentence explains why a step is important?", opts:["Bread is soft.","This step matters because the peanut butter can spill if you press too hard.","I like sandwiches.","The end."], a:1} ],
+    [ {q:"Which word shows what happens FIRST in a set of instructions?", opts:["Finally","Next","First","Also"], a:2},
+      {q:"Which sentence uses a linking word correctly?", opts:["Wash your hands.","First, wash your hands with soap.","Hands soap water.","Soap is for hands."], a:1} ],
+    [ {q:"A good closing sentence for a how-to guide...", opts:["Introduces a new topic","Tells the reader they finished and can enjoy the result","Lists more materials","Asks a random question"], a:1},
+      {q:"Which is a good closing sentence?", opts:["Bread is a food.","Now you know how to make a sandwich all by yourself!","First, get bread.","Sandwiches are food."], a:1} ]
+  ],
+  'opinion-writing':[
+    [ {q:"An opinion sentence should...", opts:["State a fact only","Clearly say what you think or believe","Ask a question","List ingredients"], a:1},
+      {q:"Which sentence states an opinion?", opts:["Pizza has cheese.","I think pizza is the best food.","Pizza is round.","Pizza is a food."], a:1} ],
+    [ {q:"Which word signals a REASON is coming?", opts:["and","because","the","is"], a:1},
+      {q:"Which sentence gives a reason for an opinion?", opts:["Pizza is round.","I think pizza is the best because it has cheese and toppings.","Pizza is a food.","The end."], a:1} ],
+    [ {q:"A second reason should be...", opts:["The exact same as the first reason","A different reason from the first one","Not related to the opinion","Left out completely"], a:1},
+      {q:"Which word introduces an ADDITIONAL reason?", opts:["Also","The","Is","And is"], a:0} ],
+    [ {q:"Your strongest reason is often called...", opts:["The least important one","The most important reason","A fact, not an opinion","The ending"], a:1},
+      {q:"Which phrase signals your STRONGEST reason?", opts:["Also,","Most importantly,","The,","And is,"], a:1} ],
+    [ {q:"An example in opinion writing should be...", opts:["Vague and general","Specific and real","A made-up fact","Left out"], a:1},
+      {q:"Which phrase introduces an example?", opts:["The end","For example,","Also is,","Because the"], a:1} ],
+    [ {q:"Acknowledging another view means...", opts:["Agreeing you were wrong","Mentioning what someone who disagrees might think","Ignoring the topic","Changing your opinion"], a:1},
+      {q:"Which word often introduces a different viewpoint before disagreeing with it?", opts:["Also","However","First","Finally"], a:1} ],
+    [ {q:"Which word helps organize reasons in order?", opts:["Also is","First","The a","Because because"], a:1},
+      {q:"Which sentence uses a linking word to organize reasons?", opts:["Recess is fun.","First, I get to play outside with my friends.","Playing is nice.","The end."], a:1} ],
+    [ {q:"A conclusion in opinion writing should...", opts:["Introduce a brand new opinion","Restate your opinion in a new way","List more materials","Ask the reader a random question"], a:1},
+      {q:"Which phrase signals a conclusion?", opts:["Once upon a time","In conclusion,","First,","Also,"], a:1} ]
+  ],
+  'paragraphs':[
+    [ {q:"A topic sentence should...", opts:["List every detail at once","Introduce ONE clear topic","Ask a random question","Be the last sentence"], a:1},
+      {q:"Which is a good topic sentence?", opts:["Drawing is fun and also I like markers and paper.","Let me tell you about my favorite hobby, drawing.","The end.","Markers are colorful."], a:1} ],
+    [ {q:"A supporting detail should...", opts:["Have nothing to do with the topic","Support or explain the topic sentence","Always be the shortest sentence","Come before the topic sentence"], a:1},
+      {q:"Which word often introduces the first detail?", opts:["Finally","First","The","Is"], a:1} ],
+    [ {q:"Which word introduces a SECOND detail?", opts:["First","Second","The","Is"], a:1},
+      {q:"Explaining WHY a detail matters helps the reader...", opts:["Get confused","Understand your point better","Skip the paragraph","Forget the topic"], a:1} ],
+    [ {q:"How many main details does a classic paragraph usually have?", opts:["1","3","10","0"], a:1},
+      {q:"Which word often introduces the LAST detail?", opts:["First","Second","Finally","Is"], a:2} ],
+    [ {q:"A specific example helps a paragraph by...", opts:["Making it more confusing","Proving a detail with something real","Changing the topic","Ending the paragraph early"], a:1},
+      {q:"Which phrase introduces an example?", opts:["The end","For example,","Also is,","Because the"], a:1} ],
+    [ {q:"Vivid describing words help the reader...", opts:["Skip the sentence","Picture what you're describing","Get bored","Forget the topic"], a:1},
+      {q:"Which word is more vivid than 'good'?", opts:["nice","fine","dazzling","ok"], a:2} ],
+    [ {q:"Linking words like 'also' and 'however' help a paragraph...", opts:["Flow smoothly between ideas","Become longer for no reason","Lose its topic","Repeat the same idea"], a:0},
+      {q:"Which sentence uses a linking word?", opts:["I like drawing. I like markers.","In addition, I also enjoy painting.","Drawing markers paint.","The end."], a:1} ],
+    [ {q:"A concluding sentence should...", opts:["Introduce a brand new topic","Restate the topic in a new way","List more details","Just stop mid-thought"], a:1},
+      {q:"Which phrase signals a conclusion?", opts:["Once upon a time","Overall,","First,","Also,"], a:1} ]
+  ],
+  'descriptive-writing':[
+    [ {q:"A descriptive piece should begin by...", opts:["Telling a joke","Telling the reader WHAT is being described","Asking a math question","Ending the description"], a:1},
+      {q:"Which sentence tells the reader what's being described?", opts:["It was nice.","I want to describe my cozy little bedroom.","The end.","Bedrooms are rooms."], a:1} ],
+    [ {q:"Which sense does 'I can see bright yellow taxis' use?", opts:["Sight","Sound","Touch","Taste"], a:0},
+      {q:"Describing words for SIGHT often include...", opts:["Loud, quiet, humming","Colors, sizes, and shapes","Sour, sweet, salty","Rough, smooth, soft"], a:1} ],
+    [ {q:"Which phrase compares a sound to something else?", opts:["It was loud.","It sounds like tiny drums.","I heard it.","Sound is a noise."], a:1},
+      {q:"Describing SOUND helps the reader...", opts:["See colors","Hear the scene in their mind","Taste something","Forget the description"], a:1} ],
+    [ {q:"Which word describes how something feels to TOUCH?", opts:["Loud","Fuzzy","Sour","Bright"], a:1},
+      {q:"Touch details describe...", opts:["What something looks like","What something feels like when touched","What something sounds like","A character's name"], a:1} ],
+    [ {q:"Which phrase describes a SMELL?", opts:["It looks nice.","It smells like fresh cut grass.","It sounds loud.","It feels soft."], a:1},
+      {q:"Smell and taste details are often introduced with...", opts:["First, Next, Then","Smells like, tastes like","Once upon a time","The end"], a:1} ],
+    [ {q:"A simile compares two things using...", opts:["Because and so","Like or as","First and finally","You and your"], a:1},
+      {q:"Which sentence is a simile?", opts:["The thunder was loud.","The thunder crashed like a giant drum.","I heard thunder.","Thunder is weather."], a:1} ],
+    [ {q:"A strong, specific verb is better than a plain one because it...", opts:["Is longer","Paints a clearer picture for the reader","Is harder to spell","Ends the sentence"], a:1},
+      {q:"Which is a stronger verb than 'went'?", opts:["was","zoomed","is","the"], a:1} ],
+    [ {q:"A good closing sentence for a description often...", opts:["Introduces a brand new topic","Shares the overall feeling or mood","Lists more materials","Asks an unrelated question"], a:1},
+      {q:"Which phrase signals an overall feeling?", opts:["Once upon a time","Overall, it makes me feel...","First,","The end"], a:1} ]
+  ],
+  'persuasive-writing':[
+    [ {q:"A persuasive position statement should...", opts:["Be vague and unclear","Clearly state what you believe","Ask a question only","List materials"], a:1},
+      {q:"Which sentence states a clear position?", opts:["Recess is a word.","I believe that schools should have more recess.","Recess happens at school.","The end."], a:1} ],
+    [ {q:"Which word signals a REASON is coming?", opts:["and","because","the","is"], a:1},
+      {q:"A reason in persuasive writing should...", opts:["Support your position","Have nothing to do with your position","Repeat your position exactly","Be left out"], a:0} ],
+    [ {q:"A rhetorical question is used to...", opts:["Confuse the reader","Make the reader stop and think","End the piece","List materials"], a:1},
+      {q:"Which is a rhetorical question?", opts:["Recess is fun.","Don't you think kids deserve more time to play?","The end.","I like recess."], a:1} ],
+    [ {q:"Speaking directly to the reader means using...", opts:["\"He\" and \"she\"","\"You\" and \"your\"","\"They\" and \"them\"","\"It\" and \"its\""], a:1},
+      {q:"Which sentence speaks directly to the reader?", opts:["Kids like recess.","You would feel so much happier with more recess.","Recess is fun for kids.","The end."], a:1} ],
+    [ {q:"A fact-sounding claim often starts with...", opts:["Once upon a time","Many people believe... / Studies show...","The end","First,"], a:1},
+      {q:"Why use a fact-sounding claim in persuasive writing?", opts:["To confuse the reader","To make your position sound more convincing","To end the piece","To change the topic"], a:1} ],
+    [ {q:"An emotional appeal tries to make the reader...", opts:["Feel something about the issue","Fall asleep","Forget the topic","Disagree with you"], a:0},
+      {q:"Which phrase is an emotional appeal?", opts:["Recess happens at school.","Imagine how happy every student would feel.","The end.","Recess is a break."], a:1} ],
+    [ {q:"Acknowledging another view means...", opts:["Agreeing you were wrong","Mentioning what someone who disagrees might think","Ignoring the topic","Ending the piece"], a:1},
+      {q:"Which word often introduces a counter-argument?", opts:["Also","However","First","Finally"], a:1} ],
+    [ {q:"A call to action tells the reader to...", opts:["Ignore the issue","Actually do something about the issue","Forget the position","Ask more questions"], a:1},
+      {q:"Which phrase is a call to action?", opts:["Once upon a time","So please, let's make this change today.","Recess is a word.","The end."], a:1} ]
+  ]
+};
+
+// ── STATE ──
+let state = { grade:null, unitKey:null, levelIdx:0, promptIdx:0, repsDone:0, usedPrompts:[], teacherMode:false, attempts:[], progress:{}, rehearsed:false, scribed:false, draftText:'', phase:'practice', stories:{} };
+function unitProgress(){ state.progress[state.unitKey] = state.progress[state.unitKey] || 1; return state.progress[state.unitKey]; }
+function currentLevel(){ return DATA[state.grade].units[state.unitKey].levels[state.levelIdx]; }
+function currentPrompt(){ return currentLevel().prompts[state.promptIdx]; }
+function currentUnit(){ return DATA[state.grade].units[state.unitKey]; }
+function getStory(unitKey){
+  if(!state.stories[unitKey]) state.stories[unitKey] = { topic:'', parts:[] };
+  return state.stories[unitKey];
+}
+function pickPromptIndex(lvl){
+  if(!state.usedPrompts.length && lvl.prompts.length){ /* first pick handled by caller resetting */ }
+  let avail = lvl.prompts.map((_,i)=>i).filter(i=>!state.usedPrompts.includes(i));
+  if(avail.length===0){ state.usedPrompts=[]; avail=lvl.prompts.map((_,i)=>i); }
+  const idx = avail[Math.floor(Math.random()*avail.length)];
+  state.usedPrompts.push(idx);
+  return idx;
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── PERSISTENCE (best-effort; app works fine without it) ──
+const SAVE_KEY='writingWorkshopSave';
+function saveState(){
+  try{
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      progress: state.progress, attempts: state.attempts,
+      grade: state.grade, unitKey: state.unitKey, levelIdx: state.levelIdx,
+      promptIdx: state.promptIdx, repsDone: state.repsDone, usedPrompts: state.usedPrompts,
+      draftText: state.draftText, phase: state.phase, stories: state.stories
+    }));
+  }catch(e){ /* storage unavailable — continue with in-memory state only */ }
+}
+function loadSavedState(){
+  try{ const raw=localStorage.getItem(SAVE_KEY); return raw?JSON.parse(raw):null; }catch(e){ return null; }
+}
+function clearSavedState(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+
+let draftSaveTimer=null;
+function scheduleDraftSave(){
+  state.draftText = document.getElementById('writing-input').value;
+  clearTimeout(draftSaveTimer);
+  draftSaveTimer = setTimeout(saveState, 600);
+}
+
+// ── TEACHER TOGGLE / STREAK ──
+function toggleTeacher(){
+  state.teacherMode=!state.teacherMode;
+  document.getElementById('teacher-toggle').classList.toggle('active',state.teacherMode);
+  render();
+}
+function renderStreak(){
+  const passes = state.attempts.filter(Boolean).length;
+  document.getElementById('streak-val').textContent = '🔥 ' + passes;
+  const last8 = state.attempts.slice(-8);
+  document.getElementById('streak-dots').innerHTML = last8.map(a=>`<div class="s-dot ${a?'on':'off'}"></div>`).join('') || '<div class="s-dot"></div>';
+}
+
+// ── SCREENS ──
+function showGradePicker(){
+  state.grade=null; state.unitKey=null;
+  document.getElementById('breadcrumb').textContent='Pick a grade to start';
+  const app=document.getElementById('app');
+  document.getElementById('quiz-area').innerHTML='';
+  let html=`<div class="card slide-up"><h2>Choose a Grade</h2><div class="grid">`;
+  [1,2,3].forEach(g=>{
+    const d=DATA[g];
+    if(d.comingSoon){
+      html+=`<div class="pick-card locked"><div class="pick-icon">🔒</div><div><div class="title">${d.label}</div><div class="sub">Coming soon</div></div></div>`;
+    } else {
+      html+=`<button class="pick-card" onclick="showUnitPicker(${g})" style="border:none;width:100%;"><div class="pick-icon">📝</div><div><div class="title">${d.label}</div><div class="sub">${d.sub}</div></div></button>`;
+    }
+  });
+  html+=`</div></div>`;
+  app.innerHTML=html;
+  if(state.attempts && state.attempts.length){
+    app.innerHTML += `<div style="text-align:center;"><button class="back-btn" onclick="startFresh()" style="font-size:.75rem;">🔄 Reset progress for a new student</button></div>`;
+  }
+}
+
+function showResumeBanner(saved){
+  document.getElementById('breadcrumb').textContent='Welcome back!';
+  const app=document.getElementById('app');
+  document.getElementById('quiz-area').innerHTML='';
+  const gradeInfo = DATA[saved.grade];
+  const gradeLabel = gradeInfo ? gradeInfo.label : 'Grade '+saved.grade;
+  const unit = gradeInfo && gradeInfo.units[saved.unitKey];
+  const unitLabel = unit ? unit.title : saved.unitKey;
+  app.innerHTML = `<div class="card slide-up" style="text-align:center;">
+    <h2>👋 Welcome Back!</h2>
+    <p style="font-weight:700;color:var(--muted);margin-bottom:18px;">You were on <strong>${esc(gradeLabel)} · ${esc(unitLabel)} · Level ${(saved.levelIdx||0)+1}</strong>.</p>
+    <div class="action-row">
+      <button class="btn btn-green btn-lg" onclick="resumeSavedState()">▶️ Continue Where I Left Off</button>
+      <button class="btn btn-ghost" onclick="startFresh()">🔄 Start Fresh</button>
+    </div>
+  </div>`;
+}
+
+function resumeSavedState(){
+  const saved=loadSavedState();
+  if(!saved || !saved.grade || !saved.unitKey){ showGradePicker(); return; }
+  state.progress = saved.progress || {};
+  state.attempts = saved.attempts || [];
+  state.grade = saved.grade;
+  state.unitKey = saved.unitKey;
+  state.levelIdx = saved.levelIdx || 0;
+  state.promptIdx = saved.promptIdx || 0;
+  state.repsDone = saved.repsDone || 0;
+  state.usedPrompts = saved.usedPrompts || [];
+  state.draftText = saved.draftText || '';
+  state.phase = saved.phase || 'practice';
+  state.stories = saved.stories || {};
+  renderStreak();
+  renderWriteScreen();
+}
+
+function startFresh(){
+  clearSavedState();
+  state = { grade:null, unitKey:null, levelIdx:0, promptIdx:0, repsDone:0, usedPrompts:[], teacherMode:false, attempts:[], progress:{}, rehearsed:false, scribed:false, draftText:'', phase:'practice', stories:{} };
+  renderStreak();
+  showGradePicker();
+}
+
+function initApp(){
+  const saved=loadSavedState();
+  if(saved && saved.grade && saved.unitKey) showResumeBanner(saved);
+  else showGradePicker();
+}
+
+function showUnitPicker(g){
+  state.grade=g; state.unitKey=null;
+  document.getElementById('breadcrumb').textContent=`${DATA[g].label} · Pick a unit`;
+  const app=document.getElementById('app');
+  let html=`<div class="card slide-up"><button class="back-btn" onclick="showGradePicker()" style="margin-bottom:14px;">← Grades</button><h2>Choose a Unit</h2><div class="grid">`;
+  Object.entries(DATA[g].units).forEach(([key,u])=>{
+    if(u.available){
+      html+=`<button class="pick-card" onclick="showLevelPicker('${key}')" style="border:none;width:100%;"><div class="pick-icon">${u.icon}</div><div><div class="title">${u.title}</div><div class="sub">${u.sub}</div></div></button>`;
+    } else {
+      html+=`<div class="pick-card locked"><div class="pick-icon">🔒</div><div><div class="title">${u.title}</div><div class="sub">${u.sub}</div></div></div>`;
+    }
+  });
+  html+=`</div></div>`;
+  app.innerHTML=html;
+}
+
+function showLevelPicker(key){
+  state.unitKey=key;
+  const unit=DATA[state.grade].units[key];
+  const unlocked=unitProgress();
+  document.getElementById('breadcrumb').textContent=`${DATA[state.grade].label} · ${unit.title}`;
+  const app=document.getElementById('app');
+  document.getElementById('quiz-area').innerHTML='';
+  let html=`<div class="card slide-up"><button class="back-btn" onclick="showUnitPicker(${state.grade})" style="margin-bottom:14px;">← Units</button><h2>${unit.icon} ${unit.title}</h2><div class="level-grid">`;
+  unit.levels.forEach((lvl,i)=>{
+    const n=i+1;
+    const locked = n>unlocked;
+    html+=`<button class="lvl-btn" ${locked?'disabled':''} onclick="startLevel(${i})">${locked?'🔒':n}<span class="reps-tag">${lvl.reps}×</span></button>`;
+  });
+  html+=`</div>`;
+  if(state.teacherMode){
+    html+=`<div class="tip-box" style="margin-top:16px;"><div class="tip-title">👩‍🏫 Teacher Note</div>Level ${unlocked} is next. Each level needs several successful sentences (shown as "3×" etc.) with different prompts before it unlocks the next level — this builds repetition into mastery instead of a single lucky pass.</div>`;
+  }
+  html+=`</div>`;
+  app.innerHTML=html;
+}
+
+function startLevel(i){
+  state.levelIdx=i;
+  state.repsDone=0;
+  state.usedPrompts=[];
+  state.draftText='';
+  state.phase='practice';
+  const lvl=currentLevel();
+  state.promptIdx=pickPromptIndex(lvl);
+  saveState();
+  renderWriteScreen();
+}
+
+function nextRep(){
+  state.draftText='';
+  const lvl=currentLevel();
+  state.promptIdx=pickPromptIndex(lvl);
+  saveState();
+  renderWriteScreen();
+}
+
+function retrySamePrompt(){
+  // draftText intentionally preserved so a failed attempt can be edited, not retyped from scratch
+  renderWriteScreen();
+}
+
+// Dispatches to the right screen based on where the student is: normal skill-practice reps,
+// the one-time topic picker before a story-mode unit's first addition, or the story-building
+// step itself (add one piece to an ongoing story). Non-story-mode units (Sentences About Me,
+// Labels & Lists) never leave 'practice', so they render exactly as before.
+function renderWriteScreen(){
+  const unit=currentUnit();
+  if(unit.storyMode && state.phase==='story'){
+    const lvl=currentLevel();
+    const story=getStory(state.unitKey);
+    if(state.levelIdx===0 && !story.topic){
+      renderTopicPicker();
+      return;
+    }
+    renderStoryScreen();
+    return;
+  }
+  renderPracticeScreen();
+}
+
+function renderPracticeScreen(){
+  state.rehearsed=false;
+  state.scribed=false;
+  const unit=DATA[state.grade].units[state.unitKey];
+  const lvl=currentLevel();
+  const prompt=currentPrompt();
+  document.getElementById('breadcrumb').textContent=`${DATA[state.grade].label} · ${unit.title} · Level ${state.levelIdx+1}`;
+  const app=document.getElementById('app');
+  document.getElementById('quiz-area').innerHTML='';
+  let scaffoldHtml='';
+  if(lvl.scaffoldType==='wordbank-starter'){
+    scaffoldHtml+=`<div class="starter-box"><div class="starter-lbl">Sentence Starter</div>${esc(prompt.starter)}</div>`;
+    scaffoldHtml+=`<div class="wordbank">${prompt.wordBank.map(w=>`<span class="wb-chip">${esc(w)}</span>`).join('')}</div>`;
+  } else if(lvl.scaffoldType==='starter'){
+    scaffoldHtml+=`<div class="starter-box"><div class="starter-lbl">Sentence Starter</div>${esc(prompt.starter)}</div>`;
+  } else if(lvl.scaffoldType==='emoji-wordbank'){
+    scaffoldHtml+=`<div style="text-align:center;font-size:4.5rem;line-height:1;margin-bottom:12px;">${prompt.emoji}</div>`;
+    scaffoldHtml+=`<div class="wordbank" style="justify-content:center;">${prompt.wordBank.map(w=>`<span class="wb-chip">${esc(w)}</span>`).join('')}</div>`;
+  } else if(lvl.scaffoldType==='list'){
+    scaffoldHtml+=`<div class="starter-box"><div class="starter-lbl">How to Write Your List</div>Write one item on each line. Press Enter after each one!</div>`;
+    scaffoldHtml+=`<div class="checklist-side"><div class="checklist-side-title">Writing Checklist</div><ul>${lvl.checklist.map(c=>`<li>${esc(c)}</li>`).join('')}</ul></div>`;
+  } else {
+    scaffoldHtml+=`<div class="checklist-side"><div class="checklist-side-title">Writing Checklist</div><ul>${lvl.checklist.map(c=>`<li>${esc(c)}</li>`).join('')}</ul></div>`;
+  }
+  let exemplarHtml='';
+  if(state.teacherMode){
+    exemplarHtml=`<div class="exemplar-box"><div class="exemplar-lbl">👩‍🏫 Exemplar (Teacher Mode)</div>${esc(prompt.exemplar)}</div>`;
+  } else {
+    exemplarHtml=`<button class="btn btn-ghost" id="example-btn" onclick="toggleExample()" style="margin-top:10px;">💡 Show Me an Example</button>
+      <div class="exemplar-box" id="example-box" style="display:none;margin-top:10px;"><div class="exemplar-lbl">💡 Example</div>${esc(prompt.exemplar)}</div>`;
+  }
+  const repDotsHtml = Array.from({length:lvl.reps}).map((_,ri)=>{
+    const cls = ri<state.repsDone ? 'done' : (ri===state.repsDone ? 'current' : '');
+    return `<div class="rep-dot ${cls}"></div>`;
+  }).join('');
+  const unitNoun = lvl.mode==='label' ? 'Label' : (lvl.mode==='list' ? 'List' : 'Sentence');
+  const draftPlaceholder = lvl.mode==='label' ? 'Type your label here...' : (lvl.mode==='list' ? 'Item 1\nItem 2\nItem 3...' : 'Say it out loud first, then type it here...');
+  const html=`<div class="card slide-up">
+    <div class="write-top">
+      <button class="back-btn" onclick="showLevelPicker('${state.unitKey}')">← Levels</button>
+      <div class="pills"><span class="pill pill-coral">Level ${state.levelIdx+1}</span> <span class="pill pill-sky">${unit.title}</span> <span class="pill pill-purple">${unitNoun} ${state.repsDone+1} of ${lvl.reps}</span></div>
+    </div>
+    <div class="rep-dots">${repDotsHtml}</div>
+    <div class="prompt-box">
+      <div class="prompt-title">Your Writing Prompt</div>
+      <div class="prompt-text">${esc(prompt.text)}</div>
+      ${exemplarHtml}
+    </div>
+    ${scaffoldHtml}
+    <div class="rehearsal-box" id="rehearsal-box">
+      <div class="rehearsal-title">🗣️ Say It Before You Write It</div>
+      <div class="rehearsal-sub">Say your answer out loud to a partner, the teacher, or yourself. Then you can type it!</div>
+      <div class="rehearsal-btns">
+        <button class="btn btn-ghost" onclick="speakPrompt()">🔊 Hear the Prompt</button>
+        <button class="btn btn-green" onclick="markRehearsed()">✓ I Said It!</button>
+      </div>
+      <div class="scribe-row"><label><input type="checkbox" id="scribe-check" onchange="state.scribed=this.checked"> ✍️ An adult is typing this for me</label></div>
+    </div>
+    <textarea id="writing-input" placeholder="${esc(draftPlaceholder)}" oninput="updateWordCount();scheduleDraftSave();" disabled>${esc(state.draftText||'')}</textarea>
+    <div class="word-count" id="word-count">${(state.draftText||'').trim()?state.draftText.trim().split(/\s+/).filter(Boolean).length:0} words</div>
+    <div class="action-row">
+      <button class="btn btn-coral btn-lg" id="check-btn" onclick="submitWriting()" disabled>✓ Check My Writing</button>
+      <button class="btn btn-ghost" onclick="speakMyWriting()">🔊 Read It Back To Me</button>
+      <button class="btn btn-ghost" onclick="printLevel()">🖨️ Print</button>
+    </div>
+  </div>`;
+  app.innerHTML=html;
+}
+
+// Called once, right after Level 1's practice reps are mastered for a story-mode unit,
+// to let the student pick (or write their own) topic for the story they'll build across
+// every remaining level.
+function renderTopicPicker(){
+  const unit=currentUnit();
+  const lvl=currentLevel();
+  document.getElementById('breadcrumb').textContent=`${DATA[state.grade].label} · ${unit.title} · Choose Your Story`;
+  document.getElementById('quiz-area').innerHTML='';
+  const starters=lvl.storyStarters||[];
+  const html=`<div class="card slide-up">
+    <h2>📖 What will YOUR story be about?</h2>
+    <p style="font-weight:700;color:var(--muted);margin-bottom:16px;">Pick an idea to start with, or write your own. You'll build this story one piece at a time as you go through the levels.</p>
+    <div class="grid">
+      ${starters.map((s,i)=>{
+        const isOwn=s.toLowerCase().includes('my own');
+        const jsCall=isOwn?'showOwnTopicInput()':`chooseStoryTopic(${JSON.stringify(s)})`;
+        return `<button class="pick-card" style="border:none;width:100%;" onclick="${esc(jsCall)}"><div class="pick-icon">${isOwn?'✏️':'📖'}</div><div><div class="title">${esc(s)}</div></div></button>`;
+      }).join('')}
+    </div>
+    <div id="own-topic-box" style="display:none;margin-top:14px;">
+      <textarea id="own-topic-input" placeholder="Type your own story idea here (a sentence or two about what it'll be about)..." style="min-height:70px;"></textarea>
+      <button class="btn btn-sky" style="margin-top:8px;width:100%;" onclick="confirmOwnTopic()">✓ Use This Idea</button>
+    </div>
+  </div>`;
+  document.getElementById('app').innerHTML=html;
+}
+
+function showOwnTopicInput(){
+  document.getElementById('own-topic-box').style.display='block';
+  document.getElementById('own-topic-input').focus();
+}
+
+function confirmOwnTopic(){
+  const val=document.getElementById('own-topic-input').value.trim();
+  if(!val) return;
+  chooseStoryTopic(val);
+}
+
+function chooseStoryTopic(topic){
+  const story=getStory(state.unitKey);
+  story.topic=topic;
+  saveState();
+  renderWriteScreen();
+}
+
+// Called from the results screen once a level's practice reps are fully mastered — moves
+// the student from isolated skill practice into adding a real piece to their own story.
+function goToStoryStep(){
+  state.phase='story';
+  state.draftText='';
+  saveState();
+  renderWriteScreen();
+}
+
+function renderStoryScreen(){
+  const unit=currentUnit();
+  const lvl=currentLevel();
+  const story=getStory(state.unitKey);
+  document.getElementById('breadcrumb').textContent=`${DATA[state.grade].label} · ${unit.title} · Building Your Story`;
+  document.getElementById('quiz-area').innerHTML='';
+  const storySoFarHtml = story.parts.length
+    ? story.parts.map(esc).join(' ')
+    : '<em style="color:#94a3b8;">This is the very start of your story!</em>';
+  let exemplarHtml='';
+  const examplePrompt=currentPrompt();
+  if(state.teacherMode){
+    exemplarHtml=`<div class="exemplar-box"><div class="exemplar-lbl">👩‍🏫 Example (Teacher Mode)</div>${esc(examplePrompt.exemplar)}</div>`;
+  } else {
+    exemplarHtml=`<button class="btn btn-ghost" id="example-btn" onclick="toggleExample()" style="margin-top:10px;">💡 Show Me an Example</button>
+      <div class="exemplar-box" id="example-box" style="display:none;margin-top:10px;"><div class="exemplar-lbl">💡 Example</div>${esc(examplePrompt.exemplar)}</div>`;
+  }
+  const html=`<div class="card slide-up">
+    <div class="write-top">
+      <button class="back-btn" onclick="showLevelPicker('${state.unitKey}')">← Levels</button>
+      <div class="pills"><span class="pill pill-coral">Level ${state.levelIdx+1}</span> <span class="pill pill-sky">${unit.title}</span> <span class="pill pill-purple">✍️ Story Step</span></div>
+    </div>
+    <div class="checklist-side" style="background:linear-gradient(135deg,#eff6ff,#f0fdf4);">
+      <div class="checklist-side-title">📖 Your Story So Far</div>
+      <div style="font-size:1rem;line-height:1.7;font-weight:700;color:var(--text);">${storySoFarHtml}</div>
+    </div>
+    <div class="prompt-box">
+      <div class="prompt-title">Add To Your Story</div>
+      <div class="prompt-text">${esc(lvl.storyInstruction)}</div>
+      ${exemplarHtml}
+    </div>
+    <div class="checklist-side"><div class="checklist-side-title">Writing Checklist</div><ul>${lvl.storyChecklist.map(c=>`<li>${esc(c)}</li>`).join('')}</ul></div>
+    <div class="rehearsal-box" id="rehearsal-box">
+      <div class="rehearsal-title">🗣️ Say It Before You Write It</div>
+      <div class="rehearsal-sub">Say your sentence out loud first. Then you can type it!</div>
+      <div class="rehearsal-btns">
+        <button class="btn btn-green" onclick="markRehearsed()">✓ I Said It!</button>
+      </div>
+      <div class="scribe-row"><label><input type="checkbox" id="scribe-check" onchange="state.scribed=this.checked"> ✍️ An adult is typing this for me</label></div>
+    </div>
+    <textarea id="writing-input" placeholder="Add the next part of your story..." oninput="updateWordCount();scheduleDraftSave();" disabled>${esc(state.draftText||'')}</textarea>
+    <div class="word-count" id="word-count">${(state.draftText||'').trim()?state.draftText.trim().split(/\s+/).filter(Boolean).length:0} words</div>
+    <div class="action-row">
+      <button class="btn btn-coral btn-lg" id="check-btn" onclick="submitWriting()" disabled>✓ Add To My Story</button>
+      <button class="btn btn-ghost" onclick="speakMyWriting()">🔊 Read It Back To Me</button>
+      <button class="btn btn-ghost" onclick="printMyStory()">🖨️ Print My Story</button>
+    </div>
+  </div>`;
+  document.getElementById('app').innerHTML=html;
+}
+
+function updateWordCount(){
+  const t=document.getElementById('writing-input').value.trim();
+  const n=t?t.split(/\s+/).filter(Boolean).length:0;
+  document.getElementById('word-count').textContent=n+' words';
+}
+
+// ── ORAL REHEARSAL ──
+function speakPrompt(){
+  if(!('speechSynthesis' in window)) return;
+  const prompt=currentPrompt();
+  let text=prompt.text;
+  if(prompt.starter) text += ' You could start with: ' + prompt.starter.replace(/___/g,'blank');
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.9;
+  window.speechSynthesis.speak(u);
+}
+
+function speakMyWriting(){
+  if(!('speechSynthesis' in window)) return;
+  const ta=document.getElementById('writing-input');
+  if(!ta) return;
+  const text=ta.value.trim();
+  if(!text) return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85;
+  window.speechSynthesis.speak(u);
+}
+
+function toggleExample(){
+  const box=document.getElementById('example-box');
+  const btn=document.getElementById('example-btn');
+  if(!box) return;
+  const showing = box.style.display !== 'none';
+  box.style.display = showing ? 'none' : 'block';
+  if(btn) btn.textContent = showing ? '💡 Show Me an Example' : '🙈 Hide Example';
+}
+
+function markRehearsed(){
+  state.rehearsed=true;
+  const box=document.getElementById('rehearsal-box');
+  box.classList.add('done');
+  const scribeNote = state.scribed ? ' <span class="pill pill-purple">✍️ Adult typing</span>' : '';
+  box.innerHTML=`<div class="rehearsal-title">✓ Nice! You said it out loud. Now write it down.${scribeNote}</div>`;
+  const ta=document.getElementById('writing-input');
+  ta.disabled=false;
+  const lvl=currentLevel();
+  const freshPlaceholder = lvl.mode==='label' ? 'Now type your label...' : (lvl.mode==='list' ? 'Item 1\nItem 2\nItem 3...' : 'Now type the sentence you said out loud...');
+  ta.placeholder = state.scribed ? "Adult: type exactly what they said..." : freshPlaceholder;
+  ta.focus();
+  document.getElementById('check-btn').disabled=false;
+}
+
+// ── EVALUATION ──
+const STOPWORDS=new Set(['a','an','the','is','it','was','were','are','to','of','and','in','on','my','i','me','so']);
+function hasWordVariety(words){
+  const content=words.map(w=>w.toLowerCase().replace(/[^a-z']/g,'')).filter(w=>w && !STOPWORDS.has(w));
+  if(content.length<3) return true;
+  const freq={};
+  content.forEach(w=>freq[w]=(freq[w]||0)+1);
+  const maxCount=Math.max(...Object.values(freq));
+  return (maxCount/content.length) <= 0.5;
+}
+// A trait word only counts if there's real content after it — not just the bare word tacked
+// onto the end ("I like pizza because."). This is the main defense against a student learning
+// to game the checklist by appending a connector word without actually using it. Label mode is
+// deliberately excluded — labels are only 1-4 words by design, so requiring words *after* the
+// trait word there would unfairly fail perfectly good short answers like "soft blanket".
+function hasKeywordWithFollowthrough(text, traitWords, minFollow){
+  minFollow = minFollow || 2;
+  const lower=text.toLowerCase();
+  return traitWords.some(w=>{
+    const wLower=w.toLowerCase();
+    const idx=lower.indexOf(wLower);
+    if(idx===-1) return false;
+    const after=text.slice(idx+w.length);
+    const afterWords=after.split(/\s+/).filter(Boolean).filter(tok=>/[a-zA-Z]/.test(tok));
+    return afterWords.length>=minFollow;
+  });
+}
+
+function evaluateSentence(text, lvl){
+  const trimmed=text.trim();
+  const sentences=trimmed.split(/[.!?]+/).map(s=>s.trim()).filter(Boolean);
+  const words=trimmed.split(/\s+/).filter(Boolean);
+  const capitalOk=/^[A-Z]/.test(trimmed);
+  const endOk=/[.!?]\s*$/.test(trimmed);
+  const wordOk=words.length>=lvl.target.minWords;
+  const sentOk=sentences.length>=lvl.target.minSentences;
+  let ci=0;
+  const results=[
+    {key:'capital', label:lvl.checklist[ci++], pass:capitalOk},
+    {key:'end', label:lvl.checklist[ci++], pass:endOk},
+    {key:'length', label:lvl.checklist[ci++], pass:(lvl.target.minSentences>1?sentOk:wordOk)}
+  ];
+  let traitOk=true, hasKeyword=false;
+  if(lvl.target.traitWords && lvl.target.traitWords.length){
+    hasKeyword=hasKeywordWithFollowthrough(trimmed, lvl.target.traitWords, 2);
+    const bonus=lvl.target.extraWordsBonus||4;
+    traitOk = hasKeyword || words.length >= (lvl.target.minWords + bonus);
+    results.push({key:'trait', label:lvl.checklist[ci++], pass:traitOk});
+  } else {
+    // No auto-checkable keyword for this level (e.g. "Introduces a character," "Stays on
+    // topic"). Can't verify that programmatically, so it's shown but never counted against
+    // the student — the key thing this fixes is keeping checklist array positions aligned
+    // with results, so the variety check below never inherits the wrong label.
+    results.push({key:'topic', label:lvl.checklist[ci++], pass:true});
+  }
+  const varietyOk=hasWordVariety(words);
+  results.push({key:'variety', label:lvl.checklist[ci++], pass:varietyOk});
+  return {results, capitalOk, endOk, hasKeyword, words, sentences, mode:'sentence'};
+}
+
+function evaluateLabel(text, lvl){
+  const trimmed=text.trim();
+  const words=trimmed.split(/\s+/).filter(Boolean);
+  const minW=lvl.target.minWords, maxW=lvl.target.maxWords||(minW+2);
+  let ci=0;
+  const results=[
+    {key:'nonempty', label:lvl.checklist[ci++], pass: words.length>=1},
+    {key:'lengthRange', label:lvl.checklist[ci++], pass: words.length>=minW && words.length<=maxW}
+  ];
+  let hasKeyword=false;
+  if(lvl.target.traitWords && lvl.target.traitWords.length){
+    const lower=trimmed.toLowerCase();
+    hasKeyword=lvl.target.traitWords.some(w=>lower.includes(w.toLowerCase()));
+    results.push({key:'trait', label:lvl.checklist[ci++], pass:hasKeyword});
+  }
+  return {results, words, hasKeyword, mode:'label'};
+}
+
+// Splits list-mode text into items. Newlines are the primary separator (what students are
+// taught to use). Commas are only treated as separators when there are NO newlines at all —
+// otherwise a normal sentence-style item like "First, get bread" gets wrongly split in two.
+function splitListItems(text){
+  const trimmed=text.trim();
+  if(!trimmed) return [];
+  const hasNewline=/\n/.test(trimmed);
+  const raw = hasNewline ? trimmed.split(/\n+/) : trimmed.split(/,/);
+  return raw.map(s=>s.trim()).filter(Boolean);
+}
+
+function evaluateList(text, lvl){
+  const items=splitListItems(text);
+  const minItems=lvl.target.minItems;
+  const itemMaxWords=lvl.target.itemMaxWords||6;
+  let ci=0;
+  const results=[
+    {key:'itemCount', label:lvl.checklist[ci++], pass: items.length>=minItems},
+    {key:'eachHasContent', label:lvl.checklist[ci++], pass: items.length>0 && items.every(it=>{const w=it.split(/\s+/).filter(Boolean).length; return w>=1 && w<=itemMaxWords;})}
+  ];
+  let hasKeyword=false;
+  if(lvl.target.traitWords && lvl.target.traitWords.length){
+    hasKeyword=hasKeywordWithFollowthrough(items.join(' '), lvl.target.traitWords, 2);
+    results.push({key:'trait', label:lvl.checklist[ci++], pass:hasKeyword});
+  }
+  const allWords=items.join(' ').split(/\s+/).filter(Boolean);
+  const varietyOk=hasWordVariety(allWords);
+  results.push({key:'variety', label:lvl.checklist[ci++], pass:varietyOk});
+  return {results, items, hasKeyword, mode:'list'};
+}
+
+function evaluate(text, lvl){
+  if(lvl.mode==='label') return evaluateLabel(text, lvl);
+  if(lvl.mode==='list') return evaluateList(text, lvl);
+  return evaluateSentence(text, lvl);
+}
+
+function annotateSentence(text, lvl, capitalOk, endOk){
+  const chars=text.split('');
+  const classes=new Array(chars.length).fill(null);
+  if(chars.length) classes[0]=capitalOk?'ok':'bad';
+  let li=chars.length-1;
+  while(li>=0 && /\s/.test(chars[li])) li--;
+  if(li>=0) classes[li]=endOk?'ok':'bad';
+  if(lvl.target.traitWords){
+    lvl.target.traitWords.forEach(w=>{
+      const re=new RegExp('\\b'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','ig');
+      let m;
+      while((m=re.exec(text))){
+        for(let i=m.index;i<m.index+m[0].length;i++){ if(classes[i]==null) classes[i]='trait'; }
+      }
+    });
+  }
+  let html='',curCls=null,buf='';
+  function flush(){ if(!buf) return; html+= curCls? `<span class="mk-${curCls}">${esc(buf)}</span>` : esc(buf); buf=''; }
+  for(let i=0;i<chars.length;i++){ if(classes[i]!==curCls){flush();curCls=classes[i];} buf+=chars[i]; }
+  flush();
+  return html||'<em style="color:#94a3b8;">(nothing written yet)</em>';
+}
+
+function annotateLabel(text, ev){
+  const t=text.trim();
+  if(!t) return '<em style="color:#94a3b8;">(nothing written yet)</em>';
+  const lengthResult = ev.results.find(r=>r.key==='lengthRange');
+  const cls = (lengthResult && lengthResult.pass) ? 'mk-ok' : 'mk-bad';
+  return `<span class="${cls}">${esc(t)}</span>`;
+}
+
+function annotateList(text, lvl){
+  const items=splitListItems(text);
+  if(!items.length) return '<em style="color:#94a3b8;">(nothing written yet)</em>';
+  const itemMaxWords=lvl.target.itemMaxWords||6;
+  return items.map(it=>{
+    const w=it.split(/\s+/).filter(Boolean).length;
+    const cls = (w>=1 && w<=itemMaxWords) ? 'mk-ok' : 'mk-bad';
+    return `• <span class="${cls}">${esc(it)}</span>`;
+  }).join('<br>');
+}
+
+function annotate(text, lvl, ev){
+  if(lvl.mode==='label') return annotateLabel(text, ev);
+  if(lvl.mode==='list') return annotateList(text, lvl);
+  return annotateSentence(text, lvl, ev.capitalOk, ev.endOk);
+}
+
+let lastEval=null;
+
+const CRITICAL_KEYS = new Set(['length','lengthRange','itemCount','eachHasContent','nonempty']);
+function submitWriting(){
+  if(state.phase==='story'){ submitStoryWriting(); return; }
+  submitPracticeWriting();
+}
+
+function submitPracticeWriting(){
+  const text=document.getElementById('writing-input').value;
+  state.draftText=text;
+  const lvl=currentLevel();
+  const unit=currentUnit();
+  const ev=evaluate(text, lvl);
+  const passCount=ev.results.filter(r=>r.pass).length;
+  const total=ev.results.length;
+  // Structural minimums (word/item count, non-empty) must always be met — they define the
+  // level's actual requirement. Refinement checks (capitalization, variety, reason words) stay
+  // on the forgiving 60%-of-checklist bar so a mostly-right attempt still passes.
+  const criticalOk = ev.results.filter(r=>CRITICAL_KEYS.has(r.key)).every(r=>r.pass);
+  const passed = criticalOk && (passCount >= Math.ceil(total*0.6));
+  state.attempts.push(passed);
+  let levelMastered=false;
+  if(passed){
+    state.repsDone++;
+    state.draftText='';
+    if(state.repsDone >= lvl.reps){
+      levelMastered=true;
+      // Story-mode units don't unlock the next level yet — the student still needs to add
+      // this skill to their real story first. Non-story units unlock immediately, as before.
+      if(!unit.storyMode){
+        const unlocked=unitProgress();
+        if(state.levelIdx+1 >= unlocked) state.progress[state.unitKey]=state.levelIdx+2;
+      }
+    }
+  }
+  lastEval = {phase:'practice', text, lvl, ev, passed, levelMastered, scribed:state.scribed, repsDoneAtSubmit:state.repsDone};
+  saveState();
+  renderStreak();
+  renderResults();
+}
+
+// Story mode's target/checklist are lighter than the practice versions (adding one piece,
+// not writing the whole skill in isolation), so we evaluate against a shim level object
+// that swaps in storyTarget/storyChecklist but keeps everything else (mode, scaffoldType).
+function submitStoryWriting(){
+  const text=document.getElementById('writing-input').value;
+  state.draftText=text;
+  const lvl=currentLevel();
+  const unit=currentUnit();
+  const storyLvl={...lvl, target:lvl.storyTarget, checklist:lvl.storyChecklist};
+  const ev=evaluate(text, storyLvl);
+  const passCount=ev.results.filter(r=>r.pass).length;
+  const total=ev.results.length;
+  const criticalOk = ev.results.filter(r=>CRITICAL_KEYS.has(r.key)).every(r=>r.pass);
+  const passed = criticalOk && (passCount >= Math.ceil(total*0.6));
+  state.attempts.push(passed);
+  let unitComplete=false;
+  if(passed){
+    const story=getStory(state.unitKey);
+    story.parts.push(text.trim());
+    state.draftText='';
+    const unlocked=unitProgress();
+    if(state.levelIdx+1 >= unlocked) state.progress[state.unitKey]=state.levelIdx+2;
+    if(state.levelIdx+1 >= unit.levels.length) unitComplete=true;
+  }
+  lastEval = {phase:'story', text, lvl:storyLvl, ev, passed, unitComplete, scribed:state.scribed};
+  saveState();
+  renderStreak();
+  renderResults();
+}
+
+function renderResults(){
+  if(lastEval.phase==='story'){ renderStoryResults(); return; }
+  renderPracticeResults();
+}
+
+function renderPracticeResults(){
+  const {text, lvl, ev, passed, levelMastered, scribed, repsDoneAtSubmit} = lastEval;
+  const annotated = annotate(text, lvl, ev);
+  const passCount=ev.results.filter(r=>r.pass).length;
+  const total=ev.results.length;
+  let msg, tip;
+  const hint = (lvl.hints && lvl.hints.length) ? lvl.hints[Math.floor(Math.random()*lvl.hints.length)] : "What else could you say?";
+  const passLabel = lvl.mode==='label' ? 'label' : (lvl.mode==='list' ? 'list' : 'sentence');
+  if(passed){
+    msg = levelMastered ? "🏆 Level mastered!" : "🎉 Great writing!";
+    tip = lvl.mode==='sentence'
+      ? `Nice work! Want to make it even stronger next time? Try answering: ${hint}`
+      : `Nice work! Next time, try answering: ${hint}`;
+  } else {
+    msg = "📝 Good try — let's polish it up!";
+    const firstMiss = ev.results.find(r=>!r.pass);
+    if(firstMiss && firstMiss.key==='capital') tip = "Start your sentence with a CAPITAL letter — like M instead of m.";
+    else if(firstMiss && firstMiss.key==='end') tip = "Don't forget to end your sentence with a period (.), question mark (?), or exclamation mark (!).";
+    else if(firstMiss && firstMiss.key==='trait' && lvl.mode==='label') tip = `Try adding a describing word! You could answer: ${hint}`;
+    else if(firstMiss && firstMiss.key==='trait' && lvl.mode==='list') tip = `Try using an order word like First, Next, Then, or Finally in one of your steps.`;
+    else if(firstMiss && firstMiss.key==='trait') tip = `Try telling WHY. You could answer: ${hint}`;
+    else if(firstMiss && firstMiss.key==='variety') tip = "Try not to repeat the same word so many times — swap one in for a different word.";
+    else if(firstMiss && firstMiss.key==='nonempty') tip = "Don't forget to write something in the box!";
+    else if(firstMiss && firstMiss.key==='lengthRange') tip = `Check your word count — a ${passLabel} should have ${lvl.target.minWords}${lvl.target.maxWords?'–'+lvl.target.maxWords:''} words, not more or fewer.`;
+    else if(firstMiss && firstMiss.key==='itemCount') tip = `Try adding one more item! You could answer: ${hint}`;
+    else if(firstMiss && firstMiss.key==='eachHasContent') tip = `Keep each item short — just a word or short phrase, not a full sentence.`;
+    else if(firstMiss) tip = `Add a bit more! Try answering: ${hint}`;
+    else tip = "Read it over again — does it look complete?";
+  }
+  const checkHtml = ev.results.map(r=>`<div class="check-item ${r.pass?'pass':'miss'}">${r.pass?'✓':'✗'} ${esc(r.label)}</div>`).join('');
+  const unit=DATA[state.grade].units[state.unitKey];
+  const isLastLevel = state.levelIdx+1 >= unit.levels.length;
+
+  let primaryBtn, repLine;
+  if(!passed){
+    primaryBtn = `<button class="btn btn-coral" onclick="retrySamePrompt()">🔄 Try This One Again</button>`;
+    repLine = `Sentence ${repsDoneAtSubmit+1} of ${lvl.reps} for this level — not mastered yet.`;
+  } else if(!levelMastered){
+    primaryBtn = `<button class="btn btn-sky" onclick="nextRep()">➡️ Next Sentence (${repsDoneAtSubmit+1} of ${lvl.reps} done)</button>`;
+    repLine = `${repsDoneAtSubmit} of ${lvl.reps} sentences mastered at this level — keep going!`;
+  } else if(unit.storyMode){
+    primaryBtn = `<button class="btn btn-purple" onclick="goToStoryStep()">✍️ Add This To My Story</button>`;
+    repLine = `Skill practiced! Now let's add it to your real story.`;
+  } else if(isLastLevel){
+    primaryBtn = `<button class="btn btn-sky" onclick="showLevelPicker('${state.unitKey}')">🏁 Unit Complete!</button>`;
+    repLine = `All ${lvl.reps} sentences mastered — and that's the whole unit! 🎉`;
+  } else {
+    primaryBtn = `<button class="btn btn-sky" onclick="startLevel(${state.levelIdx+1})">🚀 Next Level</button>`;
+    repLine = `All ${lvl.reps} sentences mastered at this level — level unlocked!`;
+  }
+
+  const app=document.getElementById('app');
+  app.innerHTML += `<div class="results-card ${passed?'success':'fail'} slide-up">
+    <div class="score-row">
+      <div><div class="score-num">${passCount}/${total}</div><div class="score-lbl">Checklist Items Met</div></div>
+      <div class="badge ${passed?'s':'f'}">${passed?'PASSED':'TRY AGAIN'}</div>
+    </div>
+    <div class="rep-progress-line">${repLine}</div>
+    ${scribed?'<div style="margin-bottom:10px;"><span class="pill pill-purple">✍️ Adult-scribed — great job dictating your ideas!</span></div>':''}
+    <div style="font-weight:800;font-size:1.05rem;margin-bottom:12px;">${msg}</div>
+    <div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Your Writing</div>
+    <div class="annotated-box">${annotated}</div>
+    <div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Checklist</div>
+    <div class="check-results">${checkHtml}</div>
+    <div class="tip-box"><div class="tip-title">💡 Tip</div>${esc(tip)}</div>
+    <div class="action-row">
+      ${primaryBtn}
+      <button class="btn btn-purple" onclick="showQuiz()">📝 Skill Quiz</button>
+      <button class="btn btn-ghost" onclick="showLevelPicker('${state.unitKey}')">🎯 Levels</button>
+    </div>
+  </div>`;
+  document.getElementById('app').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderStoryResults(){
+  const {text, lvl, ev, passed, unitComplete, scribed} = lastEval;
+  const annotated = annotate(text, lvl, ev);
+  const passCount=ev.results.filter(r=>r.pass).length;
+  const total=ev.results.length;
+  const checkHtml = ev.results.map(r=>`<div class="check-item ${r.pass?'pass':'miss'}">${r.pass?'✓':'✗'} ${esc(r.label)}</div>`).join('');
+  const unit=currentUnit();
+  const story=getStory(state.unitKey);
+  const storySoFarHtml = story.parts.length ? story.parts.map(esc).join(' ') : '<em style="color:#94a3b8;">This is the very start of your story!</em>';
+
+  let msg, primaryBtn;
+  if(!passed){
+    msg = "📝 Almost! Let's fix this piece before it joins your story.";
+    primaryBtn = `<button class="btn btn-coral" onclick="retrySamePrompt()">🔄 Try This Piece Again</button>`;
+  } else if(unitComplete){
+    msg = "🎉 Your story is COMPLETE!";
+    primaryBtn = `<button class="btn btn-sky" onclick="renderStoryComplete()">📖 Read My Finished Story</button>`;
+  } else {
+    msg = "✍️ Added to your story!";
+    primaryBtn = `<button class="btn btn-sky" onclick="startLevel(${state.levelIdx+1})">🚀 Next Level</button>`;
+  }
+
+  const app=document.getElementById('app');
+  app.innerHTML += `<div class="results-card ${passed?'success':'fail'} slide-up">
+    <div class="score-row">
+      <div><div class="score-num">${passCount}/${total}</div><div class="score-lbl">Checklist Items Met</div></div>
+      <div class="badge ${passed?'s':'f'}">${passed?'ADDED':'TRY AGAIN'}</div>
+    </div>
+    ${scribed?'<div style="margin-bottom:10px;"><span class="pill pill-purple">✍️ Adult-scribed — great job dictating your ideas!</span></div>':''}
+    <div style="font-weight:800;font-size:1.05rem;margin-bottom:12px;">${msg}</div>
+    <div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Your New Piece</div>
+    <div class="annotated-box">${annotated}</div>
+    ${passed?`<div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Your Whole Story So Far</div><div class="checklist-side" style="background:linear-gradient(135deg,#eff6ff,#f0fdf4);"><div style="font-size:1rem;line-height:1.7;font-weight:700;color:var(--text);">${storySoFarHtml}</div></div>`:''}
+    <div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:14px 0 8px;">Checklist</div>
+    <div class="check-results">${checkHtml}</div>
+    <div class="action-row">
+      ${primaryBtn}
+      <button class="btn btn-ghost" onclick="showLevelPicker('${state.unitKey}')">🎯 Levels</button>
+    </div>
+  </div>`;
+  document.getElementById('app').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderStoryComplete(){
+  const unit=currentUnit();
+  const story=getStory(state.unitKey);
+  document.getElementById('breadcrumb').textContent=`${DATA[state.grade].label} · ${unit.title} · Story Complete!`;
+  document.getElementById('quiz-area').innerHTML='';
+  const fullText=story.parts.map(esc).join(' ');
+  document.getElementById('app').innerHTML=`<div class="card slide-up" style="text-align:center;">
+    <h2>🎉 You Wrote a Whole Story!</h2>
+    <p style="font-weight:700;color:var(--muted);margin-bottom:16px;">${story.topic?('Based on: '+esc(story.topic)):''}</p>
+    <div class="checklist-side" style="background:linear-gradient(135deg,#eff6ff,#f0fdf4);text-align:left;">
+      <div style="font-size:1.1rem;line-height:1.8;font-weight:700;color:var(--text);">${fullText}</div>
+    </div>
+    <div class="action-row" style="margin-top:16px;">
+      <button class="btn btn-sky btn-lg" onclick="printMyStory()">🖨️ Print My Story</button>
+      <button class="btn btn-ghost" onclick="showLevelPicker('${state.unitKey}')">🎯 Back to Levels</button>
+    </div>
+  </div>`;
+}
+
+function printMyStory(){
+  const unit=currentUnit();
+  const story=getStory(state.unitKey);
+  const w=window.open('','_blank');
+  const fullText=story.parts.map(esc).join(' ');
+  w.document.write(`<html><head><title>${esc(unit.title)} - My Story</title>
+    <style>body{font-family:Georgia,serif;max-width:700px;margin:40px auto;line-height:1.9;padding:0 20px;font-size:1.15rem;}
+    h1{font-size:1.4rem;} .meta{color:#666;font-size:.85rem;margin-bottom:24px;}</style>
+    </head><body>
+    <h1>${esc(unit.title)}</h1>
+    <p class="meta">${esc(DATA[state.grade].label)} Writing Workshop${story.topic?(' — Based on: '+esc(story.topic)):''}</p>
+    <p>${fullText || '<em>(story not finished yet)</em>'}</p>
+    <p style="margin-top:40px;color:#999;font-size:.85rem;">Written by: _____________________</p>
+    </body></html>`);
+  w.document.close();
+  w.print();
+}
+
+function printLevel(){
+  const unit=DATA[state.grade].units[state.unitKey];
+  const lvl=currentLevel();
+  const prompt=currentPrompt();
+  const w=window.open('','_blank');
+  let scaffold='';
+  let lines;
+  let unitNoun='Sentence';
+  if(lvl.scaffoldType==='wordbank-starter'){
+    scaffold=`<p><strong>Sentence Starter:</strong> ${esc(prompt.starter)}</p><p><strong>Word Bank:</strong> ${prompt.wordBank.map(esc).join(', ')}</p>`;
+    lines=Array(6).fill('<div style="border-bottom:1px solid #999;height:34px;"></div>').join('');
+  } else if(lvl.scaffoldType==='starter'){
+    scaffold=`<p><strong>Sentence Starter:</strong> ${esc(prompt.starter)}</p>`;
+    lines=Array(6).fill('<div style="border-bottom:1px solid #999;height:34px;"></div>').join('');
+  } else if(lvl.scaffoldType==='emoji-wordbank'){
+    unitNoun='Label';
+    scaffold=`<div style="font-size:3.5rem;text-align:center;margin:10px 0;">${prompt.emoji}</div><p><strong>Word Bank:</strong> ${prompt.wordBank.map(esc).join(', ')}</p>`;
+    lines=Array(2).fill('<div style="border-bottom:1px solid #999;height:34px;"></div>').join('');
+  } else if(lvl.scaffoldType==='list'){
+    unitNoun='List';
+    scaffold=`<p><em>Write one item on each line.</em></p>`;
+    const n=Math.max(lvl.target.minItems||4, 4);
+    lines=Array(n).fill(0).map((_,i)=>`<div style="display:flex;gap:8px;align-items:center;"><span style="color:#999;">${i+1}.</span><div style="flex:1;border-bottom:1px solid #999;height:32px;"></div></div>`).join('');
+  } else {
+    lines=Array(6).fill('<div style="border-bottom:1px solid #999;height:34px;"></div>').join('');
+  }
+  const checklist=lvl.checklist.map(c=>`<li>☐ ${esc(c)}</li>`).join('');
+  w.document.write(`<html><head><title>${esc(unit.title)} - Level ${state.levelIdx+1}</title>
+    <style>body{font-family:Georgia,serif;max-width:700px;margin:40px auto;line-height:1.7;padding:0 20px;}
+    h1{font-size:1.3rem;} .meta{color:#666;font-size:.85rem;margin-bottom:20px;}
+    ul{margin:16px 0 16px 20px;} li{list-style:none;margin-bottom:6px;}</style>
+    </head><body>
+    <h1>${esc(unit.title)} — Level ${state.levelIdx+1} (${esc(unitNoun)} ${state.repsDone+1} of ${lvl.reps})</h1>
+    <p class="meta">${esc(DATA[state.grade].label)} Writing Workshop</p>
+    <p><strong>Prompt:</strong> ${esc(prompt.text)}</p>
+    <p style="background:#fef9c3;border:1px solid #fde68a;padding:8px 12px;border-radius:6px;margin:10px 0;">🗣️ <strong>Before you write:</strong> Say your answer out loud to a partner or the teacher first!</p>
+    ${scaffold}
+    <div style="margin:24px 0;display:flex;flex-direction:column;gap:6px;">${lines}</div>
+    <p><strong>Checklist:</strong></p><ul>${checklist}</ul>
+    </body></html>`);
+  w.document.close();
+  w.print();
+}
+
+// ── QUIZ ──
+let userAnswers=[];
+function showQuiz(){
+  const qs=QUIZ[state.unitKey][state.levelIdx];
+  userAnswers=new Array(qs.length).fill(null);
+  const area=document.getElementById('quiz-area');
+  area.style.display='block';
+  renderQuiz(qs);
+  area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderQuiz(qs){
+  let html=`<div class="quiz-wrap slide-up"><h2>📝 Skill Quiz</h2><div class="quiz-sub">Test what you know about this writing skill</div>`;
+  qs.forEach((q,qi)=>{
+    html+=`<div class="quiz-q"><div class="quiz-q-text">Q${qi+1}: ${esc(q.q)}</div><div class="quiz-opts">`;
+    q.opts.forEach((opt,oi)=>{ html+=`<button class="qopt" id="qo-${qi}-${oi}" onclick="pickAnswer(${qi},${oi})">${esc(opt)}</button>`; });
+    html+=`</div></div>`;
+  });
+  html+=`<button class="btn btn-sky" onclick="submitQuiz()" style="width:100%;margin-top:4px;">✓ Check My Answers</button><div id="quiz-result" style="margin-top:14px;"></div></div>`;
+  document.getElementById('quiz-area').innerHTML=html;
+}
+function pickAnswer(qi,oi){
+  userAnswers[qi]=oi;
+  const qs=QUIZ[state.unitKey][state.levelIdx];
+  for(let i=0;i<qs[qi].opts.length;i++){
+    const b=document.getElementById(`qo-${qi}-${i}`);
+    if(b) b.className='qopt'+(i===oi?' selected':'');
+  }
+}
+function submitQuiz(){
+  const qs=QUIZ[state.unitKey][state.levelIdx];
+  let correct=0;
+  qs.forEach((q,qi)=>{
+    for(let oi=0;oi<q.opts.length;oi++){
+      const b=document.getElementById(`qo-${qi}-${oi}`);
+      if(!b) continue;
+      b.disabled=true;
+      if(oi===q.a) b.classList.add('correct');
+      else if(oi===userAnswers[qi] && userAnswers[qi]!==q.a) b.classList.add('wrong');
+    }
+    if(userAnswers[qi]===q.a) correct++;
+  });
+  const pct=Math.round((correct/qs.length)*100);
+  let msg = pct===100? '🏆 Perfect!' : pct>=50? '⭐ Good job!' : '📖 Review the checklist and try again!';
+  document.getElementById('quiz-result').innerHTML=`<div class="quiz-score"><div class="quiz-score-big">${correct}/${qs.length}</div><div class="quiz-score-msg">${msg}</div></div>`;
+}
+
+// ── INIT ──
+initApp();
+renderStreak();
+function render(){
+  if(state.unitKey && document.getElementById('writing-input')) renderWriteScreen();
+  else if(state.unitKey) showLevelPicker(state.unitKey);
+  else if(state.grade) showUnitPicker(state.grade);
+  else showGradePicker();
+}
+</script>
+</body>
+</html>
