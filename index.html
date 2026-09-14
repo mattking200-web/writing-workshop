@@ -138,6 +138,7 @@ footer{text-align:center;padding:16px 0;font-size:.7rem;font-weight:900;color:#9
     <div class="header-left">
       <h1>Writing Workshop ✏️</h1>
       <div class="breadcrumb" id="breadcrumb">Pick a grade to start</div>
+      <div id="student-badge" style="display:none;margin-top:4px;"></div>
     </div>
     <div class="header-right">
       <div class="streak-box">
@@ -1187,7 +1188,7 @@ const QUIZ = {
 };
 
 // ── STATE ──
-let state = { grade:null, unitKey:null, levelIdx:0, promptIdx:0, repsDone:0, usedPrompts:[], teacherMode:false, attempts:[], progress:{}, rehearsed:false, scribed:false, draftText:'', phase:'practice', stories:{} };
+let state = { grade:null, unitKey:null, levelIdx:0, promptIdx:0, repsDone:0, usedPrompts:[], teacherMode:false, attempts:[], progress:{}, rehearsed:false, scribed:false, draftText:'', phase:'practice', stories:{}, studentId:null, studentName:'', log:[] };
 function unitProgress(){ state.progress[state.unitKey] = state.progress[state.unitKey] || 1; return state.progress[state.unitKey]; }
 function currentLevel(){ return DATA[state.grade].units[state.unitKey].levels[state.levelIdx]; }
 function currentPrompt(){ return currentLevel().prompts[state.promptIdx]; }
@@ -1195,6 +1196,9 @@ function currentUnit(){ return DATA[state.grade].units[state.unitKey]; }
 function getStory(unitKey){
   if(!state.stories[unitKey]) state.stories[unitKey] = { topic:'', parts:[] };
   return state.stories[unitKey];
+}
+function logSubmission(entry){
+  state.log.push(entry);
 }
 function pickPromptIndex(lvl){
   if(!state.usedPrompts.length && lvl.prompts.length){ /* first pick handled by caller resetting */ }
@@ -1207,22 +1211,49 @@ function pickPromptIndex(lvl){
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-// ── PERSISTENCE (best-effort; app works fine without it) ──
-const SAVE_KEY='writingWorkshopSave';
+// ── STUDENT PROFILES + PERSISTENCE (best-effort; app works fine without it) ──
+// Each student's progress, stories, and submission log are stored under their own key,
+// so multiple kids can share one device without overwriting each other's work.
+const STUDENTS_KEY='writingWorkshopStudents';
+function studentDataKey(id){ return 'writingWorkshopStudentData_'+id; }
+
+function getStudents(){
+  try{ const raw=localStorage.getItem(STUDENTS_KEY); return raw?JSON.parse(raw):[]; }catch(e){ return []; }
+}
+function saveStudents(list){
+  try{ localStorage.setItem(STUDENTS_KEY, JSON.stringify(list)); }catch(e){ /* best-effort */ }
+}
+function addStudent(name){
+  const id = 's_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const list = getStudents();
+  list.push({id, name});
+  saveStudents(list);
+  return id;
+}
+function removeStudent(id){
+  const list = getStudents().filter(s=>s.id!==id);
+  saveStudents(list);
+  try{ localStorage.removeItem(studentDataKey(id)); }catch(e){}
+}
+
 function saveState(){
+  if(!state.studentId) return; // no active student profile — nothing to save to
   try{
-    localStorage.setItem(SAVE_KEY, JSON.stringify({
+    localStorage.setItem(studentDataKey(state.studentId), JSON.stringify({
       progress: state.progress, attempts: state.attempts,
       grade: state.grade, unitKey: state.unitKey, levelIdx: state.levelIdx,
       promptIdx: state.promptIdx, repsDone: state.repsDone, usedPrompts: state.usedPrompts,
-      draftText: state.draftText, phase: state.phase, stories: state.stories
+      draftText: state.draftText, phase: state.phase, stories: state.stories, log: state.log
     }));
   }catch(e){ /* storage unavailable — continue with in-memory state only */ }
 }
-function loadSavedState(){
-  try{ const raw=localStorage.getItem(SAVE_KEY); return raw?JSON.parse(raw):null; }catch(e){ return null; }
+function loadStudentData(id){
+  try{ const raw=localStorage.getItem(studentDataKey(id)); return raw?JSON.parse(raw):null; }catch(e){ return null; }
 }
-function clearSavedState(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+function clearSavedState(){
+  if(!state.studentId) return;
+  try{ localStorage.removeItem(studentDataKey(state.studentId)); }catch(e){}
+}
 
 let draftSaveTimer=null;
 function scheduleDraftSave(){
@@ -1242,6 +1273,16 @@ function renderStreak(){
   document.getElementById('streak-val').textContent = '🔥 ' + passes;
   const last8 = state.attempts.slice(-8);
   document.getElementById('streak-dots').innerHTML = last8.map(a=>`<div class="s-dot ${a?'on':'off'}"></div>`).join('') || '<div class="s-dot"></div>';
+  renderStudentBadge();
+}
+
+function renderStudentBadge(){
+  const badge=document.getElementById('student-badge');
+  if(!state.studentId){ badge.style.display='none'; badge.innerHTML=''; return; }
+  badge.style.display='block';
+  badge.innerHTML=`<span class="pill pill-purple">🧑‍🎓 ${esc(state.studentName)}</span>
+    <button class="back-btn" style="font-size:.65rem;padding:4px 10px;margin-left:4px;" onclick="renderStudentPicker()">🔁 Switch</button>
+    <button class="back-btn" style="font-size:.65rem;padding:4px 10px;margin-left:4px;" onclick="renderLogScreen()">📋 Log</button>`;
 }
 
 // ── SCREENS ──
@@ -1261,13 +1302,10 @@ function showGradePicker(){
   });
   html+=`</div></div>`;
   app.innerHTML=html;
-  if(state.attempts && state.attempts.length){
-    app.innerHTML += `<div style="text-align:center;"><button class="back-btn" onclick="startFresh()" style="font-size:.75rem;">🔄 Reset progress for a new student</button></div>`;
-  }
 }
 
 function showResumeBanner(saved){
-  document.getElementById('breadcrumb').textContent='Welcome back!';
+  document.getElementById('breadcrumb').textContent=`Welcome back, ${state.studentName}!`;
   const app=document.getElementById('app');
   document.getElementById('quiz-area').innerHTML='';
   const gradeInfo = DATA[saved.grade];
@@ -1275,17 +1313,17 @@ function showResumeBanner(saved){
   const unit = gradeInfo && gradeInfo.units[saved.unitKey];
   const unitLabel = unit ? unit.title : saved.unitKey;
   app.innerHTML = `<div class="card slide-up" style="text-align:center;">
-    <h2>👋 Welcome Back!</h2>
+    <h2>👋 Welcome Back, ${esc(state.studentName)}!</h2>
     <p style="font-weight:700;color:var(--muted);margin-bottom:18px;">You were on <strong>${esc(gradeLabel)} · ${esc(unitLabel)} · Level ${(saved.levelIdx||0)+1}</strong>.</p>
     <div class="action-row">
       <button class="btn btn-green btn-lg" onclick="resumeSavedState()">▶️ Continue Where I Left Off</button>
-      <button class="btn btn-ghost" onclick="startFresh()">🔄 Start Fresh</button>
+      <button class="btn btn-ghost" onclick="resetCurrentStudentProgress()">🔄 Start Fresh</button>
     </div>
   </div>`;
 }
 
 function resumeSavedState(){
-  const saved=loadSavedState();
+  const saved=loadStudentData(state.studentId);
   if(!saved || !saved.grade || !saved.unitKey){ showGradePicker(); return; }
   state.progress = saved.progress || {};
   state.attempts = saved.attempts || [];
@@ -1298,21 +1336,89 @@ function resumeSavedState(){
   state.draftText = saved.draftText || '';
   state.phase = saved.phase || 'practice';
   state.stories = saved.stories || {};
+  state.log = saved.log || [];
   renderStreak();
   renderWriteScreen();
 }
 
-function startFresh(){
+// Resets the CURRENT student's saved progress/log/stories, but keeps them logged in —
+// this is "I want to start over," not "forget this student ever existed."
+function resetCurrentStudentProgress(){
   clearSavedState();
-  state = { grade:null, unitKey:null, levelIdx:0, promptIdx:0, repsDone:0, usedPrompts:[], teacherMode:false, attempts:[], progress:{}, rehearsed:false, scribed:false, draftText:'', phase:'practice', stories:{} };
+  const id=state.studentId, name=state.studentName, teacherMode=state.teacherMode;
+  state = { grade:null, unitKey:null, levelIdx:0, promptIdx:0, repsDone:0, usedPrompts:[], teacherMode, attempts:[], progress:{}, rehearsed:false, scribed:false, draftText:'', phase:'practice', stories:{}, studentId:id, studentName:name, log:[] };
   renderStreak();
   showGradePicker();
 }
 
+// ── STUDENT PROFILES ──
+function renderStudentPicker(){
+  state.studentId=null; state.studentName='';
+  document.getElementById('breadcrumb').textContent="Who's writing today?";
+  document.getElementById('quiz-area').innerHTML='';
+  const students=getStudents();
+  let html=`<div class="card slide-up"><h2>👋 Who's Writing Today?</h2>`;
+  if(students.length){
+    html+=`<div class="grid">`;
+    students.forEach(s=>{
+      html+=`<div style="display:flex;gap:8px;">
+        <button class="pick-card" style="border:none;flex:1;" onclick='selectStudent(${JSON.stringify(s.id)})'><div class="pick-icon">🧑‍🎓</div><div><div class="title">${esc(s.name)}</div></div></button>
+        <button class="back-btn" style="font-size:.75rem;" onclick='confirmRemoveStudent(${JSON.stringify(s.id)}, ${JSON.stringify(s.name)})' title="Remove ${esc(s.name)}">✕</button>
+      </div>`;
+    });
+    html+=`</div>`;
+  } else {
+    html+=`<p style="font-weight:700;color:var(--muted);margin-bottom:16px;">No students yet — add one below to get started!</p>`;
+  }
+  html+=`<div style="margin-top:18px;">
+    <div class="starter-lbl" style="margin-bottom:6px;">Add a New Student</div>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="new-student-name" placeholder="Student's first name" style="flex:1;padding:11px 14px;border:2px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;" onkeydown="if(event.key==='Enter'){submitNewStudent();}">
+      <button class="btn btn-green" onclick="submitNewStudent()">+ Add</button>
+    </div>
+  </div>
+  </div>`;
+  document.getElementById('app').innerHTML=html;
+  renderStreak();
+}
+
+function submitNewStudent(){
+  const input=document.getElementById('new-student-name');
+  const name=input.value.trim();
+  if(!name) return;
+  const id=addStudent(name);
+  selectStudent(id);
+}
+
+function confirmRemoveStudent(id, name){
+  if(window.confirm && !window.confirm(`Remove ${name} and all of their saved progress? This cannot be undone.`)) return;
+  removeStudent(id);
+  renderStudentPicker();
+}
+
+function selectStudent(id){
+  const found=getStudents().find(s=>s.id===id);
+  if(!found){ renderStudentPicker(); return; }
+  const teacherMode=state.teacherMode;
+  state.studentId=id;
+  state.studentName=found.name;
+  state.teacherMode=teacherMode;
+  const saved=loadStudentData(id);
+  if(saved && saved.grade && saved.unitKey){
+    state.log = saved.log || [];
+    state.attempts = saved.attempts || [];
+    showResumeBanner(saved);
+  } else {
+    state.progress={}; state.attempts=[]; state.grade=null; state.unitKey=null; state.levelIdx=0;
+    state.promptIdx=0; state.repsDone=0; state.usedPrompts=[]; state.draftText=''; state.phase='practice';
+    state.stories={}; state.log=[];
+    renderStreak();
+    showGradePicker();
+  }
+}
+
 function initApp(){
-  const saved=loadSavedState();
-  if(saved && saved.grade && saved.unitKey) showResumeBanner(saved);
-  else showGradePicker();
+  renderStudentPicker();
 }
 
 function showUnitPicker(g){
@@ -1446,18 +1552,17 @@ function renderPracticeScreen(){
     </div>
     ${scaffoldHtml}
     <div class="rehearsal-box" id="rehearsal-box">
-      <div class="rehearsal-title">🗣️ Say It Before You Write It</div>
-      <div class="rehearsal-sub">Say your answer out loud to a partner, the teacher, or yourself. Then you can type it!</div>
+      <div class="rehearsal-title">🗣️ Tip: Say It Before You Write It</div>
+      <div class="rehearsal-sub">Saying your answer out loud first can help you think it through.</div>
       <div class="rehearsal-btns">
         <button class="btn btn-ghost" onclick="speakPrompt()">🔊 Hear the Prompt</button>
-        <button class="btn btn-green" onclick="markRehearsed()">✓ I Said It!</button>
       </div>
       <div class="scribe-row"><label><input type="checkbox" id="scribe-check" onchange="state.scribed=this.checked"> ✍️ An adult is typing this for me</label></div>
     </div>
-    <textarea id="writing-input" placeholder="${esc(draftPlaceholder)}" oninput="updateWordCount();scheduleDraftSave();" disabled>${esc(state.draftText||'')}</textarea>
+    <textarea id="writing-input" placeholder="${esc(draftPlaceholder)}" oninput="updateWordCount();scheduleDraftSave();">${esc(state.draftText||'')}</textarea>
     <div class="word-count" id="word-count">${(state.draftText||'').trim()?state.draftText.trim().split(/\s+/).filter(Boolean).length:0} words</div>
     <div class="action-row">
-      <button class="btn btn-coral btn-lg" id="check-btn" onclick="submitWriting()" disabled>✓ Check My Writing</button>
+      <button class="btn btn-coral btn-lg" id="check-btn" onclick="submitWriting()">✓ Check My Writing</button>
       <button class="btn btn-ghost" onclick="speakMyWriting()">🔊 Read It Back To Me</button>
       <button class="btn btn-ghost" onclick="printLevel()">🖨️ Print</button>
     </div>
@@ -1552,17 +1657,14 @@ function renderStoryScreen(){
     </div>
     <div class="checklist-side"><div class="checklist-side-title">Writing Checklist</div><ul>${lvl.storyChecklist.map(c=>`<li>${esc(c)}</li>`).join('')}</ul></div>
     <div class="rehearsal-box" id="rehearsal-box">
-      <div class="rehearsal-title">🗣️ Say It Before You Write It</div>
-      <div class="rehearsal-sub">Say your sentence out loud first. Then you can type it!</div>
-      <div class="rehearsal-btns">
-        <button class="btn btn-green" onclick="markRehearsed()">✓ I Said It!</button>
-      </div>
+      <div class="rehearsal-title">🗣️ Tip: Say It Before You Write It</div>
+      <div class="rehearsal-sub">Saying it out loud first can help you think it through.</div>
       <div class="scribe-row"><label><input type="checkbox" id="scribe-check" onchange="state.scribed=this.checked"> ✍️ An adult is typing this for me</label></div>
     </div>
-    <textarea id="writing-input" placeholder="Add the next part of your story..." oninput="updateWordCount();scheduleDraftSave();" disabled>${esc(state.draftText||'')}</textarea>
+    <textarea id="writing-input" placeholder="Add the next part of your story..." oninput="updateWordCount();scheduleDraftSave();">${esc(state.draftText||'')}</textarea>
     <div class="word-count" id="word-count">${(state.draftText||'').trim()?state.draftText.trim().split(/\s+/).filter(Boolean).length:0} words</div>
     <div class="action-row">
-      <button class="btn btn-coral btn-lg" id="check-btn" onclick="submitWriting()" disabled>✓ Add To My Story</button>
+      <button class="btn btn-coral btn-lg" id="check-btn" onclick="submitWriting()">✓ Add To My Story</button>
       <button class="btn btn-ghost" onclick="speakMyWriting()">🔊 Read It Back To Me</button>
       <button class="btn btn-ghost" onclick="printMyStory()">🖨️ Print My Story</button>
     </div>
@@ -1824,6 +1926,7 @@ function submitPracticeWriting(){
     }
   }
   lastEval = {phase:'practice', text, lvl, ev, passed, levelMastered, scribed:state.scribed, repsDoneAtSubmit:state.repsDone};
+  logSubmission({ts:Date.now(), unitKey:state.unitKey, unitTitle:unit.title, levelIdx:state.levelIdx, phase:'practice', text, passed, passCount, total});
   saveState();
   renderStreak();
   renderResults();
@@ -1854,6 +1957,7 @@ function submitStoryWriting(){
     if(state.levelIdx+1 >= unit.levels.length) unitComplete=true;
   }
   lastEval = {phase:'story', text, lvl:storyLvl, ev, passed, unitComplete, scribed:state.scribed};
+  logSubmission({ts:Date.now(), unitKey:state.unitKey, unitTitle:unit.title, levelIdx:state.levelIdx, phase:'story', text, passed, passCount, total});
   saveState();
   renderStreak();
   renderResults();
@@ -2013,6 +2117,73 @@ function printMyStory(){
     <p class="meta">${esc(DATA[state.grade].label)} Writing Workshop${story.topic?(' — Based on: '+esc(story.topic)):''}</p>
     <p>${fullText || '<em>(story not finished yet)</em>'}</p>
     <p style="margin-top:40px;color:#999;font-size:.85rem;">Written by: _____________________</p>
+    </body></html>`);
+  w.document.close();
+  w.print();
+}
+
+// ── SUBMISSION LOG (teacher-facing review) ──
+function renderLogScreen(){
+  if(!state.studentId){ renderStudentPicker(); return; }
+  document.getElementById('breadcrumb').textContent=`${state.studentName}'s Writing Log`;
+  document.getElementById('quiz-area').innerHTML='';
+  const entries=[...state.log].reverse();
+  let html=`<div class="card slide-up">
+    <button class="back-btn" onclick="${state.unitKey?"renderWriteScreen()":"showGradePicker()"}" style="margin-bottom:14px;">← Back</button>
+    <h2>📋 ${esc(state.studentName)}'s Writing Log</h2>
+    <p style="font-weight:700;color:var(--muted);margin-bottom:16px;">${entries.length} submission${entries.length===1?'':'s'} recorded — includes every attempt, pass or fail.</p>`;
+  if(!entries.length){
+    html+=`<p style="font-weight:700;color:var(--muted);">Nothing submitted yet.</p>`;
+  } else {
+    html+=`<div style="display:flex;flex-direction:column;gap:10px;">`;
+    entries.forEach(e=>{
+      const d=new Date(e.ts);
+      const dateStr=isNaN(d.getTime())?'':d.toLocaleString();
+      const phaseLbl = e.phase==='story' ? '✍️ Story Step' : '📝 Practice';
+      html+=`<div class="checklist-side" style="margin-bottom:0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <div><span class="pill pill-sky">${esc(e.unitTitle||e.unitKey)}</span> <span class="pill pill-coral">Level ${(e.levelIdx||0)+1}</span> <span class="pill pill-purple">${phaseLbl}</span></div>
+          <div class="badge ${e.passed?'s':'f'}" style="padding:4px 12px;font-size:.75rem;">${e.passed?'PASSED':'TRY AGAIN'} (${e.passCount}/${e.total})</div>
+        </div>
+        <div style="font-weight:700;color:var(--text);margin-bottom:4px;">${esc(e.text) || '<em style="color:#94a3b8;">(empty)</em>'}</div>
+        <div style="font-size:.7rem;font-weight:800;color:var(--muted);">${esc(dateStr)}</div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  html+=`<div class="action-row" style="margin-top:16px;">
+    <button class="btn btn-sky" onclick="printLog()">🖨️ Print Log</button>
+  </div>
+  </div>`;
+  document.getElementById('app').innerHTML=html;
+}
+
+function printLog(){
+  const w=window.open('','_blank');
+  const entries=[...state.log].reverse();
+  const rows=entries.map(e=>{
+    const d=new Date(e.ts);
+    const dateStr=isNaN(d.getTime())?'':d.toLocaleString();
+    return `<tr>
+      <td>${esc(dateStr)}</td>
+      <td>${esc(e.unitTitle||e.unitKey)}</td>
+      <td>Level ${(e.levelIdx||0)+1}</td>
+      <td>${e.phase==='story'?'Story Step':'Practice'}</td>
+      <td>${e.passed?'Passed':'Try Again'} (${e.passCount}/${e.total})</td>
+      <td>${esc(e.text)}</td>
+    </tr>`;
+  }).join('');
+  w.document.write(`<html><head><title>${esc(state.studentName)} - Writing Log</title>
+    <style>body{font-family:Georgia,serif;max-width:900px;margin:30px auto;padding:0 20px;}
+    h1{font-size:1.3rem;} .meta{color:#666;font-size:.85rem;margin-bottom:20px;}
+    table{width:100%;border-collapse:collapse;font-size:.85rem;}
+    th,td{border:1px solid #ccc;padding:6px 8px;text-align:left;vertical-align:top;}
+    th{background:#f1f5f9;}</style>
+    </head><body>
+    <h1>${esc(state.studentName)}'s Writing Log</h1>
+    <p class="meta">Writing Workshop — ${entries.length} submission${entries.length===1?'':'s'}</p>
+    <table><thead><tr><th>Date</th><th>Unit</th><th>Level</th><th>Type</th><th>Result</th><th>What they wrote</th></tr></thead>
+    <tbody>${rows || '<tr><td colspan="6"><em>Nothing submitted yet.</em></td></tr>'}</tbody></table>
     </body></html>`);
   w.document.close();
   w.print();
