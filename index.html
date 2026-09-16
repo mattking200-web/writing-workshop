@@ -126,6 +126,18 @@ textarea:focus{outline:none;border-color:var(--coral);}
 .quiz-score-big{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#4338ca;}
 .quiz-score-msg{font-weight:800;font-size:.9rem;color:#6366f1;margin-top:4px;}
 @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.confetti-piece{position:fixed;top:-12px;z-index:9999;pointer-events:none;animation:confettiFall linear forwards;}
+@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0.4;}}
+.celebrate-banner{text-align:center;padding:22px 16px;margin-bottom:16px;background:linear-gradient(135deg,#dcfce7,#bbf7d0);border:3px solid #4ade80;border-radius:20px;animation:celebratePop .5s ease;}
+.celebrate-banner .celebrate-emoji{font-size:3rem;line-height:1;margin-bottom:6px;}
+.celebrate-banner .celebrate-text{font-family:'Fredoka One',cursive;font-size:2rem;line-height:1.15;color:#15803d;}
+.celebrate-banner .celebrate-sub{font-size:1.05rem;font-weight:800;color:#16a34a;margin-top:8px;}
+.celebrate-banner.big{background:linear-gradient(135deg,#fef9c3,#fde68a);border-color:#fbbf24;}
+.celebrate-banner.big .celebrate-emoji{font-size:3.8rem;}
+.celebrate-banner.big .celebrate-text{font-size:2.4rem;color:#92400e;}
+.celebrate-banner.big .celebrate-sub{color:#b45309;}
+@keyframes celebratePop{0%{transform:scale(0.55);opacity:0;}60%{transform:scale(1.08);opacity:1;}100%{transform:scale(1);opacity:1;}}
+@media(max-width:480px){.celebrate-banner .celebrate-text{font-size:1.6rem;}.celebrate-banner.big .celebrate-text{font-size:1.9rem;}}
 .slide-up{animation:slideUp .35s ease;}
 footer{text-align:center;padding:16px 0;font-size:.7rem;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:.15em;}
 @media(max-width:480px){.prompt-text{font-size:1.05rem;}.annotated-box{font-size:1rem;}}
@@ -1968,16 +1980,68 @@ function renderResults(){
   renderPracticeResults();
 }
 
+function playSuccessSound(big){
+  try{
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const notes = big ? [523.25,659.25,783.99,1046.50] : [523.25,659.25,783.99]; // C5-E5-G5, plus C6 for a bigger moment
+    notes.forEach((freq,i)=>{
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.type='sine';
+      osc.frequency.value=freq;
+      const startTime=ctx.currentTime+i*0.11;
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.22, startTime+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime+0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime+0.4);
+    });
+    setTimeout(()=>{ try{ ctx.close(); }catch(e){} }, (notes.length*0.11+0.6)*1000);
+  }catch(e){ /* audio unavailable — celebration still works visually without it */ }
+}
+
+function triggerConfetti(big){
+  const colors=['#fb7185','#4ade80','#38bdf8','#fbbf24','#a78bfa','#f472b6','#22c55e'];
+  const count = big ? 60 : 32;
+  for(let i=0;i<count;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.left=(Math.random()*100)+'vw';
+    el.style.background=colors[Math.floor(Math.random()*colors.length)];
+    const size=(6+Math.random()*6);
+    el.style.width=size+'px';
+    el.style.height=size+'px';
+    el.style.borderRadius=Math.random()<0.5?'50%':'2px';
+    const duration=(1.6+Math.random()*1.2);
+    el.style.animationDuration=duration+'s';
+    el.style.animationDelay=(Math.random()*0.3)+'s';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), (duration+0.6)*1000);
+  }
+}
+
 function renderPracticeResults(){
   const {text, lvl, ev, passed, levelMastered, scribed, repsDoneAtSubmit} = lastEval;
   const annotated = annotate(text, lvl, ev);
   const passCount=ev.results.filter(r=>r.pass).length;
   const total=ev.results.length;
-  let msg, tip;
+  let msg, tip, celebrateHtml='';
   const hint = (lvl.hints && lvl.hints.length) ? lvl.hints[Math.floor(Math.random()*lvl.hints.length)] : "What else could you say?";
   const passLabel = lvl.mode==='label' ? 'label' : (lvl.mode==='list' ? 'list' : 'sentence');
+  const nameTag = state.studentName ? `, ${esc(state.studentName)}` : '';
   if(passed){
-    msg = levelMastered ? "🏆 Level mastered!" : "🎉 Great writing!";
+    const bigClass = levelMastered ? ' big' : '';
+    const emoji = levelMastered ? '🏆' : '🎉';
+    const sub = levelMastered ? `Level mastered — you scored ${passCount}/${total}!` : `You scored ${passCount}/${total}!`;
+    celebrateHtml = `<div class="celebrate-banner${bigClass}">
+      <div class="celebrate-emoji">${emoji}</div>
+      <div class="celebrate-text">Great job${nameTag}!</div>
+      <div class="celebrate-sub">${sub}</div>
+    </div>`;
     tip = lvl.mode==='sentence'
       ? `Nice work! Want to make it even stronger next time? Try answering: ${hint}`
       : `Nice work! Next time, try answering: ${hint}`;
@@ -2020,14 +2084,15 @@ function renderPracticeResults(){
   }
 
   const app=document.getElementById('app');
-  app.innerHTML += `<div class="results-card ${passed?'success':'fail'} slide-up">
+  app.innerHTML = `<div class="results-card ${passed?'success':'fail'} slide-up">
+    ${celebrateHtml}
     <div class="score-row">
       <div><div class="score-num">${passCount}/${total}</div><div class="score-lbl">Checklist Items Met</div></div>
       <div class="badge ${passed?'s':'f'}">${passed?'PASSED':'TRY AGAIN'}</div>
     </div>
     <div class="rep-progress-line">${repLine}</div>
     ${scribed?'<div style="margin-bottom:10px;"><span class="pill pill-purple">✍️ Adult-scribed — great job dictating your ideas!</span></div>':''}
-    <div style="font-weight:800;font-size:1.05rem;margin-bottom:12px;">${msg}</div>
+    ${!passed?`<div style="font-weight:800;font-size:1.05rem;margin-bottom:12px;">${msg}</div>`:''}
     <div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Your Writing</div>
     <div class="annotated-box">${annotated}</div>
     <div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Checklist</div>
@@ -2039,6 +2104,7 @@ function renderPracticeResults(){
       <button class="btn btn-ghost" onclick="showLevelPicker('${state.unitKey}')">🎯 Levels</button>
     </div>
   </div>`;
+  if(passed){ triggerConfetti(levelMastered); playSuccessSound(levelMastered); }
   document.getElementById('app').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -2052,26 +2118,36 @@ function renderStoryResults(){
   const story=getStory(state.unitKey);
   const storySoFarHtml = story.parts.length ? story.parts.map(esc).join(' ') : '<em style="color:#94a3b8;">This is the very start of your story!</em>';
 
-  let msg, primaryBtn;
+  let msg='', primaryBtn, celebrateHtml='';
+  const nameTag = state.studentName ? `, ${esc(state.studentName)}` : '';
   if(!passed){
     msg = "📝 Almost! Let's fix this piece before it joins your story.";
     primaryBtn = `<button class="btn btn-coral" onclick="retrySamePrompt()">🔄 Try This Piece Again</button>`;
   } else if(unitComplete){
-    msg = "🎉 Your story is COMPLETE!";
+    celebrateHtml = `<div class="celebrate-banner big">
+      <div class="celebrate-emoji">🎉</div>
+      <div class="celebrate-text">Great job${nameTag}!</div>
+      <div class="celebrate-sub">Your story is COMPLETE — final score ${passCount}/${total}!</div>
+    </div>`;
     primaryBtn = `<button class="btn btn-sky" onclick="renderStoryComplete()">📖 Read My Finished Story</button>`;
   } else {
-    msg = "✍️ Added to your story!";
+    celebrateHtml = `<div class="celebrate-banner">
+      <div class="celebrate-emoji">✍️</div>
+      <div class="celebrate-text">Great job${nameTag}!</div>
+      <div class="celebrate-sub">You scored ${passCount}/${total} — added to your story!</div>
+    </div>`;
     primaryBtn = `<button class="btn btn-sky" onclick="startLevel(${state.levelIdx+1})">🚀 Next Level</button>`;
   }
 
   const app=document.getElementById('app');
-  app.innerHTML += `<div class="results-card ${passed?'success':'fail'} slide-up">
+  app.innerHTML = `<div class="results-card ${passed?'success':'fail'} slide-up">
+    ${celebrateHtml}
     <div class="score-row">
       <div><div class="score-num">${passCount}/${total}</div><div class="score-lbl">Checklist Items Met</div></div>
       <div class="badge ${passed?'s':'f'}">${passed?'ADDED':'TRY AGAIN'}</div>
     </div>
     ${scribed?'<div style="margin-bottom:10px;"><span class="pill pill-purple">✍️ Adult-scribed — great job dictating your ideas!</span></div>':''}
-    <div style="font-weight:800;font-size:1.05rem;margin-bottom:12px;">${msg}</div>
+    ${!passed?`<div style="font-weight:800;font-size:1.05rem;margin-bottom:12px;">${msg}</div>`:''}
     <div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Your New Piece</div>
     <div class="annotated-box">${annotated}</div>
     ${passed?`<div style="font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Your Whole Story So Far</div><div class="checklist-side" style="background:linear-gradient(135deg,#eff6ff,#f0fdf4);"><div style="font-size:1rem;line-height:1.7;font-weight:700;color:var(--text);">${storySoFarHtml}</div></div>`:''}
@@ -2082,6 +2158,7 @@ function renderStoryResults(){
       <button class="btn btn-ghost" onclick="showLevelPicker('${state.unitKey}')">🎯 Levels</button>
     </div>
   </div>`;
+  if(passed){ triggerConfetti(unitComplete); playSuccessSound(unitComplete); }
   document.getElementById('app').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
