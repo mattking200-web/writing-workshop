@@ -1918,7 +1918,7 @@ function annotate(text, lvl, ev){
 
 let lastEval=null;
 
-const CRITICAL_KEYS = new Set(['length','lengthRange','itemCount','eachHasContent','nonempty']);
+const CRITICAL_KEYS = new Set(['length','lengthRange','itemCount','eachHasContent','nonempty','end','trait']);
 function submitWriting(){
   if(state.phase==='story'){ submitStoryWriting(); return; }
   submitPracticeWriting();
